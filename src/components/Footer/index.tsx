@@ -4,7 +4,7 @@ import React from 'react';
 
 const Footer: React.FC = () => {
   return (
-    <DefaultFooter
+/*     <DefaultFooter
       style={{
         background: 'none',
       }}
@@ -29,7 +29,8 @@ const Footer: React.FC = () => {
           blankTarget: true,
         },
       ]}
-    />
+    /> */
+    <></>
   );
 };
 
