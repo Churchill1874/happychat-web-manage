@@ -88,7 +88,12 @@ export default [
         icon: 'team',
         path: '/member-management/list',
         component: './member-management/list'
-      }
+      },
+      {//详情页
+        path: '/member-management/detail/:id',
+        component: './member-management/detail',
+        hideInMenu: true,
+      },
     ]
   },
   {

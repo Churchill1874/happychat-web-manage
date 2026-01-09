@@ -2,9 +2,7 @@
 
 import { join } from 'node:path';
 import { defineConfig } from '@umijs/max';
-import defaultSettings from './defaultSettings';
 import proxy from './proxy';
-
 import routes from './routes';
 
 const { REACT_APP_ENV = 'dev' } = process.env;
@@ -17,6 +15,35 @@ const { REACT_APP_ENV = 'dev' } = process.env;
 const PUBLIC_PATH: string = '/';
 
 export default defineConfig({
+  request: {
+    errorConfig: {
+      errorHandler(error: any) {
+        const { response } = error;
+
+        if (response?.data?.msg) {
+          throw new Error(response.data.msg);
+        }
+
+        throw error;
+      },
+    },
+    requestInterceptors: [
+      (config: any) => {
+        if (typeof window !== 'undefined') {
+          console.log("123123")
+          const token = '123'
+          //const token = localStorage.getItem('token-id');
+          if (token) {
+            config.headers = {
+              ...config.headers,
+              'token-id': token,
+            };
+          }
+        }
+        return config;
+      },
+    ],
+  } as any,   // ✅ 关键
   /**
    * @name 开启 hash 模式
    * @description 让 build 之后的产物包含 hash 后缀。通常用于增量发布和避免浏览器加载缓存。
@@ -86,7 +113,6 @@ export default defineConfig({
   title: 'Ant Design Pro',
   layout: {
     locale: true,
-    ...defaultSettings,
   },
   /**
    * @name moment2dayjs 插件
@@ -129,7 +155,6 @@ export default defineConfig({
    * @description 它基于 axios 和 ahooks 的 useRequest 提供了一套统一的网络请求和错误处理方案。
    * @doc https://umijs.org/docs/max/request
    */
-  request: {},
   /**
    * @name 权限插件
    * @description 基于 initialState 的权限插件，必须先打开 initialState
@@ -146,29 +171,7 @@ export default defineConfig({
   ],
   //================ pro 插件配置 =================
   presets: ['umi-presets-pro'],
-  /**
-   * @name openAPI 插件的配置
-   * @description 基于 openapi 的规范生成serve 和mock，能减少很多样板代码
-   * @doc https://pro.ant.design/zh-cn/docs/openapi/
-   */
-  openAPI: [
-    {
-      requestLibPath: "import { request } from '@umijs/max'",
-      // 或者使用在线的版本
-      // schemaPath: "https://gw.alipayobjects.com/os/antfincdn/M%24jrzTTYJN/oneapi.json"
-      schemaPath: join(__dirname, 'oneapi.json'),
-      mock: false,
-    },
-    {
-      requestLibPath: "import { request } from '@umijs/max'",
-      schemaPath:
-        'https://gw.alipayobjects.com/os/antfincdn/CA1dOm%2631B/openapi.json',
-      projectName: 'swagger',
-    },
-  ],
-  mock: {
-    include: ['mock/**/*', 'src/pages/**/_mock.ts'],
-  },
+  mock: false,
   /**
    * @name 是否开启 mako
    * @description 使用 mako 极速研发
@@ -181,4 +184,5 @@ export default defineConfig({
   define: {
     'process.env.CI': process.env.CI,
   },
+  
 });
