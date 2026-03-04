@@ -89,8 +89,12 @@ export default [
         path: '/member-management/list',
         component: './member-management/list'
       },
-      {//详情页
-        path: '/member-management/detail/:id',
+      {
+        path: '/member-management/add',// ✅ 新增页
+        component: './member-management/add'
+      },
+      {
+        path: '/member-management/detail/:id',//详情页
         component: './member-management/detail',
         hideInMenu: true,
       },

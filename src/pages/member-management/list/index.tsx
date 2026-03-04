@@ -13,35 +13,56 @@ const MemberManagement: React.FC = () => {
             title: '序号',
             align: 'center',
             valueType: 'indexBorder', // 或 index
-            width: 60,
+            width: 40,
+            search: false
         },
-        { title: '昵称', dataIndex: 'name', width: 250 },
-        { title: '账号', dataIndex: 'account', width: 250 },
-        { title: '性别', dataIndex: 'gender', align: 'center', valueEnum: { 1: { text: '男' }, 0: { text: '女' } }, width: 50 },
-        { title: '生日', dataIndex: 'birth', width: 60, render: (_, record: Member) => calcAge(record.birth) },
-        { title: '等级', dataIndex: 'level', width: 50, align: 'center' },
-        { title: '城市', dataIndex: 'city' },
-        //{ title: '机器人', dataIndex: 'isBot', valueEnum: { true: { text: "是",status: 'Default' }, false: { text: "否",status:'Success' } } },
+        { title: '昵称', dataIndex: 'name', width: 160 },
+        { title: '账号', dataIndex: 'account', width: 160 },
+        {
+            title: '性别', dataIndex: 'gender', align: 'center',
+            valueEnum: { 1: { text: '男' }, 0: { text: '女' } }, width: 70, search: false
+        },
+        { title: '生日', dataIndex: 'birth', width: 50, render: (_, record: Member) => calcAge(record.birth), search: false },
+        { title: '等级', dataIndex: 'level', width: 50, align: 'center', search: false },
+        { title: '地区', dataIndex: 'city', width: 80, search: false },
         {
             title: '机器人',
             width: 70,
             dataIndex: 'isBot',
             align: 'center',
+            valueEnum: {
+                false: { text: '否' },
+                true: { text: '是' },
+            },
+            search: {
+                transform: (value) => ({
+                    isBot: value
+                })
+            },
             render: (_, record: Member) => (
-                <span style={{ color: record.isBot ? 'black' : 'gray' }}>
+                <span style={{ color: record.isBot ? '#610593' : 'gray' }}>
                     {record.isBot ? '是' : '否'}
                 </span>
             ),
         },
-        { title: '状态', dataIndex: 'status', width: 70, align: 'center', valueEnum: { 0: { text: '禁用', status: 'error' }, 1: { text: '正常', status: 'success' } } },
-        { title: '余额', dataIndex: 'balance', width: 120 },
-        { title: '地址', dataIndex: 'address' },
+
+        {
+            title: '状态', dataIndex: 'status', width: 70, align: 'center',
+            valueEnum: {
+                0: { text: '禁用', status: 'error' },
+                1: { text: '正常', status: 'success' }
+            },
+        },
+
+        { title: '余额', dataIndex: 'balance', width: 80, search: false },
+        { title: '地址', dataIndex: 'address', width: 80, search: false },
         { title: 'IP', dataIndex: 'ip', width: 120 },
         {
             title: '阵营',
             dataIndex: 'campType',
             align: 'center',
             width: 60,
+            valueEnum: { 0: { text: "无" }, 1: { text: "红营" }, 2: { text: "蓝营" } },
             render: (_, record: Member) => {
                 const map = {
                     null: { text: '无', color: '#999' },
@@ -50,7 +71,7 @@ const MemberManagement: React.FC = () => {
                     2: { text: '蓝营', color: 'blue' },
                 };
 
-                const cfg = map[record.campType as 0 | 1 | 2];
+                const cfg = map[record.campType as '0' | '1' | '2'];
 
                 return (
                     <span style={{ color: cfg?.color }}>
@@ -64,7 +85,7 @@ const MemberManagement: React.FC = () => {
             title: '操作',
             align: 'center',
             valueType: 'option',
-            width: 90,
+            width: 70,
             fixed: 'right',
             render: (_, record) => [
                 <Button
@@ -95,9 +116,50 @@ const MemberManagement: React.FC = () => {
                 };
             }}
             pagination={{
+                pageSize: 10,
                 showSizeChanger: true,
             }}
-            search={false} // 不要搜索栏可以关
+            search={{
+                span: 6,
+                labelWidth: 50,
+                defaultCollapsed: false,
+                className: 'compact-search', // 👈 加 class
+                optionRender: (searchConfig, formProps, dom) => {
+                    return [
+                        ...dom, // 保留【查询】【重置】
+                        <Button
+                            key="add"
+                            type="primary"
+                            onClick={() => {
+                                // 新增逻辑
+                                console.log('点击新增');
+                                history.push('/member-management/add')
+                            }}
+                        >
+                            新增
+                        </Button>,
+                    ];
+                },
+            }}
+            beforeSearchSubmit={(params) => {
+                const cleanParams = { ...params };
+                Object.keys(cleanParams).forEach((key) => {
+                    if (
+                        cleanParams[key] === '' ||
+                        cleanParams[key] === undefined ||
+                        cleanParams[key] === null
+                    ) {
+                        delete cleanParams[key];
+                    }
+                });
+                return cleanParams;
+            }}
+            options={{
+                density: false, // 👈 直接关掉密度按钮
+                reload: false,
+                setting: false,
+            }}
+            size='small'
         />
     );
 };
