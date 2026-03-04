@@ -1,6 +1,7 @@
 import { Question, SelectLang, Footer } from '@/components';
 import defaultSettings from '../config/defaultSettings';
 import type { RunTimeLayoutConfig } from '@umijs/max';
+import { history } from '@umijs/max';
 import { App } from 'antd';
 import { setMessageApi } from '@/utils/antd-message';
 
@@ -25,6 +26,18 @@ export const layout: RunTimeLayoutConfig = () => ({
 
   ...defaultSettings,
 });
+
+export async function getInitialState() {
+
+  const token = localStorage.getItem("token-id");
+
+  if (!token) {
+    history.push('/user/login');
+    return {};
+  }
+
+  return {};
+}
 
 /**
  * 用于注入 antd v5 的 message api

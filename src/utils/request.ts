@@ -1,6 +1,7 @@
 import { request as umiRequest } from '@umijs/max';
 import { message } from 'antd';
 import { showError } from '@/utils/antd-message'; // ✅ 用你注入的
+import { history } from '@umijs/max';
 
 
 export interface Resp<T = any> {
@@ -22,7 +23,29 @@ export async function request<T = any>(
       ...(options?.headers || {}),
       ...(token ? { 'token-id': token } : {}),
     },
+    errorHandler: (error: any) => {
+
+      if (error?.response?.status === 401) {
+
+        localStorage.removeItem("token-id");
+
+        history.push("/user/login");
+
+      }
+
+      throw error;
+    }
+
   })) as unknown as Resp<T>; // ✅ 关键：unknown 中转
+
+  if (resp.code === -2) {
+
+    localStorage.removeItem("token-id");
+
+    history.push("/user/login");
+
+    throw new Error("未登录");
+  }
 
   if (resp.code !== 0) {
     showError(resp.msg || '请求失败');
@@ -31,3 +54,4 @@ export async function request<T = any>(
 
   return resp;
 }
+
