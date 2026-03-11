@@ -4,14 +4,51 @@ import type { RunTimeLayoutConfig } from '@umijs/max';
 import { history } from '@umijs/max';
 import { App } from 'antd';
 import { setMessageApi } from '@/utils/antd-message';
+import { Dropdown } from 'antd';
+import { LogoutOutlined } from '@ant-design/icons';
+import { logout } from '@/services/admin'
 
 /**
  * layout 配置
  */
 export const layout: RunTimeLayoutConfig = () => ({
   actionsRender: () => [<Question />, <SelectLang />],
-  avatarProps: { title: 'dev' },
-  waterMarkProps: { content: 'dev' },
+
+  avatarProps: {
+    title: '管理员',
+    render: (_, avatarChildren) => {
+      return (
+        <Dropdown
+          menu={{
+            items: [
+              {
+                key: 'logout',
+                icon: <LogoutOutlined />,
+                label: '退出登录',
+                onClick: async () => {
+                  try {
+                    const res = await logout();
+
+                    if (res.code === 0) {
+                      localStorage.removeItem('token-id');
+                      window.location.href = '/user/login';
+                    }
+                  } catch (e) {
+                    localStorage.removeItem('token-id');
+                    window.location.href = '/user/login';
+                  }
+                },
+              },
+            ],
+          }}
+        >
+          {avatarChildren}
+        </Dropdown>
+      );
+    },
+  },
+
+  waterMarkProps: { content: '' },
   footerRender: () => <Footer />,
   menuHeaderRender: undefined,
   siderWidth: 170,

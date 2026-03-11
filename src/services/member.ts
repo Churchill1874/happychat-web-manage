@@ -1,11 +1,10 @@
 import { request } from '@/utils/request';
 
-export async function memberPage(
-  params: {
-    current?: number;
-    pageSize?: number;
-    [key: string]: any;
-  }) {
+export async function memberPage(params: {
+  current?: number;
+  pageSize?: number;
+  [key: string]: any;
+}) {
   const { current, pageSize, ...req } = params;
 
   return request('/api/manage/playerInfo/queryPage', {
@@ -49,8 +48,8 @@ export async function updateMember(
   params: {
     [key: string]: any;
   }
-){
-    const { ...req } = params;
+) {
+  const { ...req } = params;
   return request(
     '/api/manage/playerInfo/update',
     {
@@ -61,3 +60,5 @@ export async function updateMember(
     });
 
 }
+
+

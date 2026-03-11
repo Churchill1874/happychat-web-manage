@@ -23,10 +23,10 @@ import { createStyles } from 'antd-style';
 import React, { useState } from 'react';
 import { flushSync } from 'react-dom';
 import { Footer } from '@/components';
-import { login } from '@/services/ant-design-pro/api';
 import { getFakeCaptcha } from '@/services/ant-design-pro/login';
 import Settings from '../../../../config/defaultSettings';
 import { Alert, App, Tabs, Row, Col } from 'antd';
+import { adminLogin, AdminLoginResp, getCaptchaImage } from '@/services/admin';
 
 const useStyles = createStyles(({ token }) => {
   return {
@@ -64,26 +64,6 @@ const useStyles = createStyles(({ token }) => {
   };
 });
 
-const ActionIcons = () => {
-  const { styles } = useStyles();
-
-  return (
-    <>
-      <AlipayCircleOutlined
-        key="AlipayCircleOutlined"
-        className={styles.action}
-      />
-      <TaobaoCircleOutlined
-        key="TaobaoCircleOutlined"
-        className={styles.action}
-      />
-      <WeiboCircleOutlined
-        key="WeiboCircleOutlined"
-        className={styles.action}
-      />
-    </>
-  );
-};
 
 const Lang = () => {
   const { styles } = useStyles();
@@ -110,9 +90,10 @@ const LoginMessage: React.FC<{
   );
 };
 
+
+
 const Login: React.FC = () => {
-  const [userLoginState, setUserLoginState] = useState<API.LoginResult>({});
-  const [type, setType] = useState<string>('account');
+  const [userLoginState, setUserLoginState] = useState<AdminLoginResp | null>(null);
   const { initialState, setInitialState } = useModel('@@initialState');
   const { styles } = useStyles();
   const { message } = App.useApp();
@@ -121,65 +102,57 @@ const Login: React.FC = () => {
   const [captchaKey, setCaptchaKey] = useState('');
 
   React.useEffect(() => {
-    loadCaptcha();
+    changeCaptcha();
   }, []);
 
 
-  const loadCaptcha = async () => {
-    // 例：后端返回 { code:0, data: { imgBase64:'...', key:'...' } }
-    /*   const res = await getCaptcha();
-    
-      // 如果后端返回不带 data:image 前缀，你要手动拼
-      const img = res.data.imgBase64.startsWith('data:image')
-        ? res.data.imgBase64
-        : `data:image/png;base64,${res.data.imgBase64}`; */
+  const changeCaptcha = async () => {
+    const resp = (await getCaptchaImage());
 
-    //setCaptchaImg(img);
-    setCaptchaImg('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMjAiIGhlaWdodD0iNDAiPjxyZWN0IHdpZHRoPSIxMjAiIGhlaWdodD0iNDAiIGZpbGw9IiNmMGYwZjAiLz48dGV4dCB4PSIxMCIgeT0iMjgiIGZvbnQtc2l6ZT0iMjQiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZmlsbD0iIzMzMyIgdHJhbnNmb3JtPSJyb3RhdGUoLTUsIDYwLCAyMCkiPjhLM1c8L3RleHQ+PGxpbmUgeDE9IjAiIHkxPSIxNSIgeDI9IjEyMCIgeTI9IjI1IiBzdHJva2U9IiM5OTkiIHN0cm9rZS13aWR0aD0iMSIvPjxsaW5lIHgxPSIwIiB5MT0iMzAiIHgyPSIxMjAiIHkyPSIyMCIgc3Ryb2tlPSIjYWFhIiBzdHJva2Utd2lkdGg9IjEiLz48L3N2Zz4=')
-    //setCaptchaKey(res.data.key);
+    console.log(resp.data.captchaImage)
+    if (resp.code === 0) {
+      setCaptchaImg(resp.data.captchaImage)
+
+    } else {
+      message.error(resp.msg);
+    }
+
+
   };
 
-  /* 
-    const fetchUserInfo = async () => {
-      const userInfo = await initialState?.fetchUserInfo?.();
-      if (userInfo) {
-        flushSync(() => {
-          setInitialState((s) => ({
-            ...s,
-            currentUser: userInfo,
-          }));
-        });
-      }
-    };
-   */
-  const handleSubmit = async (values: API.LoginParams) => {
+
+  interface LoginParam {
+    username: string;
+    password: string;
+    captcha: string;
+  }
+
+  const handleSubmit = async (values: LoginParam) => {
     try {
       // 登录
-      const msg = await login({ ...values, type });
-      if (msg.status === 'ok') {
+      const resp = (await adminLogin({ ...values }));
+      if (resp.code === 0) {
+        localStorage.setItem("token-id", resp.data.tokenId);
+
         const defaultLoginSuccessMessage = intl.formatMessage({
           id: 'pages.login.success',
           defaultMessage: '登录成功！',
         });
         message.success(defaultLoginSuccessMessage);
-        //await fetchUserInfo();
         const urlParams = new URL(window.location.href).searchParams;
-        window.location.href = urlParams.get('redirect') || '/';
+        window.location.href = urlParams.get('redirect') || '/dashboard/analysis';
         return;
       }
-      console.log(msg);
       // 如果失败去设置用户错误信息
-      setUserLoginState(msg);
+      setUserLoginState(resp.data);
     } catch (error) {
       const defaultLoginFailureMessage = intl.formatMessage({
         id: 'pages.login.failure',
         defaultMessage: '登录失败，请重试！',
       });
-      console.log(error);
       message.error(defaultLoginFailureMessage);
     }
   };
-  const { status, type: loginType } = userLoginState;
 
   return (
     <div className={styles.container}>
@@ -213,12 +186,10 @@ const Login: React.FC = () => {
             autoLogin: true,
           }}
           onFinish={async (values) => {
-            await handleSubmit(values as API.LoginParams);
+            await handleSubmit(values as LoginParam);
           }}
         >
           <Tabs
-            activeKey={type}
-            onChange={setType}
             centered
             items={[
               {
@@ -235,7 +206,7 @@ const Login: React.FC = () => {
             ]}
           />
 
-          {status === 'error' && loginType === 'account' && (
+          {status === 'error' && (
             <LoginMessage
               content={intl.formatMessage({
                 id: 'pages.login.accountLogin.errorMessage',
@@ -244,7 +215,7 @@ const Login: React.FC = () => {
             />
           )}
           <ProFormText
-            name="username"
+            name="account"
             formItemProps={{
               style: { marginBottom: 30 }
             }}
@@ -295,22 +266,22 @@ const Login: React.FC = () => {
           />
 
           <ProFormText
-            name="captcha"
+            name="verificationCode"
             formItemProps={{ style: { marginBottom: 30 } }}
             fieldProps={{
               size: 'large',
               prefix: <SmileOutlined />,
               placeholder: '请输入验证码',
-              suffix: (
+              suffix: captchaImg ? (
                 <img
                   src={captchaImg}
-                  onClick={loadCaptcha}
+                  onClick={changeCaptcha}
                   style={{
                     height: 32,
                     cursor: 'pointer',
                   }}
                 />
-              ),
+              ) : null,
             }}
             rules={[{ required: true, message: '请输入验证码' }]}
           />
