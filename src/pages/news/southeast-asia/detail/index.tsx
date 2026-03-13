@@ -14,8 +14,9 @@ import {
 import { Card, Typography, message, Button, Space, Image } from 'antd';
 import './index.less';
 import { request } from '@/utils/request';
+import { update } from '@/services/southeast-asia';
 
-export interface SoutheastAsia {
+export interface SoutheastAsiaType {
     id: string; // Long → string（后端用了 ToStringSerializer）
     source: string;
     content: string;
@@ -33,12 +34,28 @@ export interface SoutheastAsia {
 
 const Detail = () => {
     const { id } = useParams<{ id: string }>();
-    const [data, setData] = useState<SoutheastAsia>();
+    const [data, setData] = useState<SoutheastAsiaType>();
     const [loading, setLoading] = useState(false);
     const [editMode, setEditMode] = useState(false);
     const formRef = useRef<ProFormInstance | null>(null);
     const images = data?.imagePath?.split('|').filter(Boolean) || [];
     const [imageList, setImageList] = useState<string[]>([]);
+
+    
+    const detailReq = async () => {
+        if (!id) return;
+
+        setLoading(true);
+        try {
+            const res = await getSoutheastAsiaDetail({ id });
+            setData(res.data);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+
+
     useEffect(() => {
         if (!editMode || !data) return;
 
@@ -52,11 +69,7 @@ const Detail = () => {
     }, [editMode, data]);
 
     useEffect(() => {
-        if (!id) return;
-        setLoading(true)
-        getSoutheastAsiaDetail({ id })
-            .then(res => { setData(res.data) })
-            .finally(() => setLoading(false));
+        detailReq();
     }, [id])
 
     useEffect(() => {
@@ -64,7 +77,6 @@ const Detail = () => {
             setImageList(data.imagePath.split('|').filter(Boolean));
         }
     }, [data]);
-
 
     const handleUpload = async () => {
 
@@ -124,7 +136,7 @@ const Detail = () => {
                     <>
 
                         <Card >
-                            <ProDescriptions<SoutheastAsia>
+                            <ProDescriptions<SoutheastAsiaType>
                                 loading={loading}
                                 dataSource={data}
                                 column={16}
@@ -135,7 +147,7 @@ const Detail = () => {
                         </Card>
 
                         <Card style={{ marginTop: 10 }}>
-                            <ProDescriptions<SoutheastAsia>
+                            <ProDescriptions<SoutheastAsiaType>
                                 loading={loading}
                                 dataSource={data}
                                 column={5}
@@ -210,7 +222,7 @@ const Detail = () => {
 
 
                 {editMode && (
-                    <ProForm<SoutheastAsia>
+                    <ProForm<SoutheastAsiaType>
                         formRef={formRef}
                         submitter={{
                             searchConfig: {
@@ -233,9 +245,12 @@ const Detail = () => {
 
                             console.log(submitData);
 
-                            // await updateSoutheastAsia(submitData);
+                            await update(submitData);
 
                             message.success('保存成功');
+
+                            await detailReq();
+
                             setEditMode(false);
                         }}
                     >
@@ -269,12 +284,6 @@ const Detail = () => {
                                 <ProFormText
                                     name="area"
                                     label="区域"
-                                    width="md"
-                                />
-
-                                <ProFormText
-                                    name="commentsCount"
-                                    label="评论数量"
                                     width="md"
                                 />
 

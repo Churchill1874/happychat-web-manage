@@ -1,13 +1,18 @@
 import { ProTable } from '@ant-design/pro-components';
-import { memberPage } from '@/services/member';
+import { memberPage, deleteById } from '@/services/member';
 import type { ProColumns } from '@ant-design/pro-components';
 import { calcAge } from '@/utils/date';
 import './index.less'
-import { Button } from 'antd';
+import { Button, App, message } from 'antd';
 import { history } from '@umijs/max';
 import { Member } from '../detail';
+import type { ActionType } from '@ant-design/pro-components';
+import { useRef } from 'react';
 
 const MemberManagement: React.FC = () => {
+    const { modal } = App.useApp();
+    const actionRef = useRef<ActionType | undefined>(undefined);
+
     const columns: ProColumns<Member>[] = [
         {
             title: '序号',
@@ -54,7 +59,7 @@ const MemberManagement: React.FC = () => {
             },
         },
 
-        { title: '余额', dataIndex: 'balance',align: 'center', width: 80, search: false },
+        { title: '余额', dataIndex: 'balance', align: 'center', width: 80, search: false },
         {
             title: '头像', align: 'center', width: 80, search: false, render: (_, record) => (
                 <img
@@ -95,7 +100,7 @@ const MemberManagement: React.FC = () => {
             width: 70,
             fixed: 'right',
             render: (_, record) => [
-                <Button
+                <a
                     key="detail"
                     type="link"
                     style={{ fontWeight: 600 }}
@@ -105,7 +110,28 @@ const MemberManagement: React.FC = () => {
                     }}
                 >
                     详情
-                </Button>,
+                </a>,
+                <a
+                    style={{ marginLeft: '30px', color: '#ff4d4f' }}
+                    onClick={() => {
+                        console.log("delete click");
+
+                        modal.confirm({
+                            title: '确认删除？',
+                            content: '删除后数据无法恢复',
+                            okType: 'danger',
+                            onOk: async () => {
+                                await deleteById({ id: record.id });
+
+                                message.success('删除成功');
+
+                                actionRef.current?.reload();
+                            },
+                        });
+                    }}
+                >
+                    删除
+                </a>
             ],
         },
     ];
@@ -113,6 +139,7 @@ const MemberManagement: React.FC = () => {
     return (
         <ProTable<Member>
             rowKey="id"
+            actionRef={actionRef}
             columns={columns}
             request={async (params) => {
                 const res = await memberPage(params);

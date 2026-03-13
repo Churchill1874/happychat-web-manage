@@ -1,14 +1,18 @@
 import { ProTable } from '@ant-design/pro-components';
-import { southeastAsiaPage } from '@/services/southeast-asia';
+import { southeastAsiaPage, deleteById } from '@/services/southeast-asia';
 import type { ProColumns } from '@ant-design/pro-components';
-import { calcAge } from '@/utils/date';
 import './index.less'
-import { Button } from 'antd';
 import { history } from '@umijs/max';
-import { SoutheastAsia } from '../detail';
+import { SoutheastAsiaType } from '../detail';
+import { Popconfirm, message, Space, App, Button } from 'antd';
+import type { ActionType } from '@ant-design/pro-components';
+import { useRef } from 'react';
 
-const MemberManagement: React.FC = () => {
-    const columns: ProColumns<SoutheastAsia>[] = [
+const SoutheastAsia: React.FC = () => {
+    const { modal } = App.useApp();
+    const actionRef = useRef<ActionType | undefined>(undefined);
+
+    const columns: ProColumns<SoutheastAsiaType>[] = [
         {
             title: '序号',
             align: 'center',
@@ -16,7 +20,7 @@ const MemberManagement: React.FC = () => {
             width: 40,
             search: false
         },
-        { title: '标题', dataIndex: 'title',align: 'center',  width: 250 },
+        { title: '标题', dataIndex: 'title', align: 'center', width: 250 },
         { title: '来源', dataIndex: 'source', width: 70, align: 'center', search: false },
         {
             title: '置顶',
@@ -32,7 +36,7 @@ const MemberManagement: React.FC = () => {
                     isTop: value
                 })
             },
-            render: (_, record: SoutheastAsia) => (
+            render: (_, record: SoutheastAsiaType) => (
                 <span style={{ color: record.isTop ? '#610593' : 'gray' }}>
                     {record.isTop ? '是' : '否'}
                 </span>
@@ -53,7 +57,7 @@ const MemberManagement: React.FC = () => {
                     isHot: value
                 })
             },
-            render: (_, record: SoutheastAsia) => (
+            render: (_, record: SoutheastAsiaType) => (
                 <span style={{ color: record.isHot ? '#610593' : 'gray' }}>
                     {record.isHot ? '是' : '否'}
                 </span>
@@ -71,33 +75,54 @@ const MemberManagement: React.FC = () => {
             },
         },
 
-        { title: '创建人', dataIndex: 'createName', width: 50,align: 'center',  search: false },
+        { title: '创建人', dataIndex: 'createName', width: 50, align: 'center', search: false },
         { title: '创建时间', dataIndex: 'createTime', width: 120, align: 'center', search: false },
 
         {
             title: '操作',
             align: 'center',
             valueType: 'option',
-            width: 40,
+            width: 80,
             fixed: 'right',
-            render: (_, record) => [
-                <Button
-                    key="detail"
-                    type="link"
-                    style={{ fontWeight: 600 }}
-                    onClick={() => {
-                        // 方式1：跳详情页（推荐）
-                        history.push(`/news/southeast-asia/detail/${record.id}`);
-                    }}
-                >
-                    详情
-                </Button>,
-            ],
+            render: (_, record) => (
+                <Space>
+                    <a
+                        onClick={() => {
+                            history.push(`/news/southeast-asia/detail/${record.id}`);
+                        }}
+                    >
+                        详情
+                    </a>
+
+                    <a
+                        style={{ marginLeft:'30px', color: '#ff4d4f' }}
+                        onClick={() => {
+                            console.log("delete click");
+
+                            modal.confirm({
+                                title: '确认删除？',
+                                content: '删除后数据无法恢复',
+                                okType: 'danger',
+                                onOk: async () => {
+                                    await deleteById({ id: record.id });
+
+                                    message.success('删除成功');
+
+                                    actionRef.current?.reload();
+                                },
+                            });
+                        }}
+                    >
+                        删除
+                    </a>
+                </Space>
+            )
         },
     ];
 
     return (
-        <ProTable<SoutheastAsia>
+        <ProTable<SoutheastAsiaType>
+            actionRef={actionRef}
             rowKey="id"
             columns={columns}
             request={async (params) => {
@@ -157,4 +182,4 @@ const MemberManagement: React.FC = () => {
     );
 };
 
-export default MemberManagement;
+export default SoutheastAsia;

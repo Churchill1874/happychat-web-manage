@@ -52,6 +52,7 @@ export async function request<T = any>(
 
   })) as unknown as Resp<T>; // ✅ 关键：unknown 中转
 
+
   if (resp.code === -2) {
 
     localStorage.removeItem("token-id");
@@ -61,11 +62,12 @@ export async function request<T = any>(
     throw new Error("未登录");
   }
 
-  if (resp.code !== 0) {
+   if (resp.code !== 0) {
+    console.log(1111111111111)
     showError(resp.msg || '请求失败');
+
     throw new Error(resp.msg || 'Business Error');
   }
-
   return resp;
 }
 

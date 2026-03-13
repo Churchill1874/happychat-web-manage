@@ -62,3 +62,15 @@ export async function deleteById(
 }
 
 
+export async function update(param: { [key: string]: any; }) {
+  const {...req} = param;
+  return request (
+    '/api/manage/southeastAsia/update',
+    {
+      method: 'POST',
+      data:{
+        ...req
+      }
+    }
+  )
+}

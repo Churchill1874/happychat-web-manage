@@ -62,3 +62,20 @@ export async function updateMember(
 }
 
 
+export async function deleteById(
+  params: {
+    [key: string]: any;
+  }
+) {
+  const { ...req } = params;
+  return request(
+    '/api/manage/playerInfo/delete',
+    {
+      method: 'POST',
+      data: {
+        ...req
+      }
+    });
+
+}
+
