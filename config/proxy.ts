@@ -13,11 +13,18 @@ export default {
   /**配置请求的代理转发 */
   dev: {
     '/api': {
-      target: 'http://127.0.0.1:8009',
+      target: 'http://localhost:8009',
       changeOrigin: true,
-      pathRewrite: { '^/api': '' },
+      pathRewrite: { '^/api': '' },   // 关键
+
+    },
+
+    '/bignews': {
+      target: 'http://localhost:8009',
+      changeOrigin: true,
     },
   },
+
   /**
    * @name 详细的代理配置
    * @doc https://github.com/chimurai/http-proxy-middleware

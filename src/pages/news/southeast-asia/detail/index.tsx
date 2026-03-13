@@ -1,6 +1,6 @@
 import { useParams, history } from '@umijs/max';
 import { useEffect, useState, useRef } from 'react';
-import { getMemberDetail, updateMember } from '@/services/member';
+import { getSoutheastAsiaDetail } from '@/services/southeast-asia';
 import {
     ProDescriptions,
     ProForm,
@@ -11,55 +11,42 @@ import {
     ProFormDatePicker,
     ProFormInstance
 } from '@ant-design/pro-components';
-import { Card, Typography, message, Button, Space } from 'antd';
-import { calcAge } from '@/utils/date';
+import { Card, Typography, message, Button, Space, Image } from 'antd';
 import './index.less';
+import { request } from '@/utils/request';
 
-export interface Member {
+export interface SoutheastAsia {
     id: string; // Long → string（后端用了 ToStringSerializer）
-    name: string;
-    account: string;
-    password?: string; // ⚠️ 一般详情页/列表不会返回
-    phone?: string;
-    email?: string;
-    gender: string;
-    city?: string;
-    /** yyyy-MM-dd */
-    birth?: string;
-    level: string;
-    selfIntroduction?: string;
-    isBot: boolean;
+    source: string;
+    content: string;
+    imagePath: string;
+    viewCount: string;
+    commentsCount: string;
+    isTop: string;
+    isHot: string;
+    area: string;
     status: string;
-    avatarPath?: string;
-    balance: string;
-    tg?: string;
-    address?: string;
-    ip?: string;
-    campType?: string;
-    /** yyyy-MM-dd HH:mm:ss */
+    title: string;
     createTime: string;
     createName?: string;
-    updateTime: string;
-    updateName?: string;
 }
 
 const Detail = () => {
     const { id } = useParams<{ id: string }>();
-    const [data, setData] = useState<Member>();
+    const [data, setData] = useState<SoutheastAsia>();
     const [loading, setLoading] = useState(false);
     const [editMode, setEditMode] = useState(false);
     const formRef = useRef<ProFormInstance | null>(null);
-
+    const images = data?.imagePath?.split('|').filter(Boolean) || [];
+    const [imageList, setImageList] = useState<string[]>([]);
     useEffect(() => {
         if (!editMode || !data) return;
 
         formRef.current?.setFieldsValue({
             ...data,
-            gender: data.gender?.toString(),
             status: data.status?.toString(),
-            level: data.level?.toString(),
-            //campType: data.campType?.toString(),
-            avatarPath: data.avatarPath?.toString(),
+            isTop: data.isTop?.toString(),
+            isHot: data.isHot?.toString()
         });
 
     }, [editMode, data]);
@@ -67,19 +54,50 @@ const Detail = () => {
     useEffect(() => {
         if (!id) return;
         setLoading(true)
-        getMemberDetail({ id })
+        getSoutheastAsiaDetail({ id })
             .then(res => { setData(res.data) })
             .finally(() => setLoading(false));
     }, [id])
 
+    useEffect(() => {
+        if (data?.imagePath) {
+            setImageList(data.imagePath.split('|').filter(Boolean));
+        }
+    }, [data]);
+
+
+    const handleUpload = async () => {
+
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = 'image/*';
+
+        input.onchange = async () => {
+            const file = input.files?.[0];
+            if (!file) return;
+
+            const formData = new FormData();
+            formData.append("file", file);
+
+            const resp = await request<string>('/api/manage/tools/upload', {
+                method: 'POST',
+                data: formData,
+            });
+
+            setImageList(prev => [...prev, resp.data]);
+        };
+
+        input.click();
+    };
+
     return (
         <>
             <Card
-                title="用户详情"
+                title="东南亚新闻详情"
                 extra={
                     <Space>
                         <Button
-                            onClick={() => history.push('/member/list')}
+                            onClick={() => history.push('/news/southeast-asia/list')}
                         >
                             返回
                         </Button>
@@ -104,98 +122,87 @@ const Detail = () => {
 
                 {!editMode && (
                     <>
-                        <Card>
-                            <ProDescriptions<Member>
+
+                        <Card >
+                            <ProDescriptions<SoutheastAsia>
+                                loading={loading}
+                                dataSource={data}
+                                column={16}
+                            >
+                                <ProDescriptions.Item label="ID" dataIndex="id" />
+                                <ProDescriptions.Item label="标题" dataIndex="title" style={{ fontWeight: "bold" }} />
+                            </ProDescriptions>
+                        </Card>
+
+                        <Card style={{ marginTop: 10 }}>
+                            <ProDescriptions<SoutheastAsia>
                                 loading={loading}
                                 dataSource={data}
                                 column={5}
                             >
-                                <ProDescriptions.Item label="账号" dataIndex="account" />
-                                <ProDescriptions.Item label="昵称" dataIndex="name" />
-
-                                <ProDescriptions.Item label="头像">
-                                    {data?.avatarPath ? (
-                                        <img
-                                            src={`/avatars/${data.avatarPath}.jpg`}
-                                            style={{ width: 35, height: 35, borderRadius: '20%' }}
-                                        />
-                                    ) : (
-                                        '-'
-                                    )}
-                                </ProDescriptions.Item>
+                                <ProDescriptions.Item label="来源" dataIndex="source" />
 
                                 <ProDescriptions.Item
-                                    label="性别"
-                                    dataIndex="gender"
+                                    label="置顶"
+                                    dataIndex="isTop"
                                     valueEnum={{
-                                        1: { text: '男' },
-                                        0: { text: '女' },
+                                        false: { text: '否', status: 'Error' },
+                                        true: { text: '是', status: 'Success' },
                                     }}
                                 />
-                                <ProDescriptions.Item label="等级" dataIndex="level" />
                                 <ProDescriptions.Item
-                                    label="年龄"
-                                    render={() => calcAge(data?.birth)}
+                                    label="热门"
+                                    dataIndex="isHot"
+                                    valueEnum={{
+                                        false: { text: '否', status: 'Error' },
+                                        true: { text: '是', status: 'Success' },
+                                    }}
                                 />
-
-                                <ProDescriptions.Item label="邮箱" dataIndex="email" />
-                                <ProDescriptions.Item label="手机" dataIndex="phone" />
-
-                                <ProDescriptions.Item label="电报账号" dataIndex="tg" />
-                                <ProDescriptions.Item label="城市" dataIndex="city" />
-                                <ProDescriptions.Item
-                                    label="机器人"
-                                    render={() => (data?.isBot ? '是' : '否')}
-                                />
-
-                                <ProDescriptions.Item label="ip地址" dataIndex="address" />
-                                <ProDescriptions.Item label="IP" dataIndex="ip" />
+                                <ProDescriptions.Item label="区域" dataIndex="area" />
+                                <ProDescriptions.Item label="评论数量" dataIndex="commentsCount" />
+                                <ProDescriptions.Item label="浏览次数" dataIndex="viewCount" />
                                 <ProDescriptions.Item
                                     label="状态"
                                     dataIndex="status"
                                     valueEnum={{
-                                        0: { text: '禁用', status: 'Error' },
-                                        1: { text: '正常', status: 'Success' },
+                                        false: { text: '不显示', status: 'Error' },
+                                        true: { text: '显示', status: 'Success' },
                                     }}
                                 />
-                                {/*                                 <ProDescriptions.Item
-                                    label="阵营"
-                                    dataIndex="campType"
-                                    valueEnum={{
-                                        0: { text: '无', color: 'black' },
-                                        1: { text: '红营', color: 'red' },
-                                        2: { text: '蓝营', color: 'blue' }
-                                    }}
-                                /> */}
-                                <ProDescriptions.Item label="余额" dataIndex="balance" />
-
-                                <ProDescriptions.Item label="修改人" dataIndex="updateName" />
-                                <ProDescriptions.Item label="修改时间" dataIndex="updateTime" />
+                                <ProDescriptions.Item label="创建人" dataIndex="createName" />
                                 <ProDescriptions.Item label="创建时间" dataIndex="createTime" />
-
-
                             </ProDescriptions>
-
-
                         </Card>
-                        <Card title="自我介绍" style={{ marginTop: 10 }}>
-                            <ProDescriptions<Member>
-                                loading={loading}
-                                dataSource={data}
-                                column={1}
-                            >
 
-                                <ProDescriptions.Item label="">
+
+
+                        <Card style={{ marginTop: 10 }}>
+                            <div className="detail-container">
+
+                                <div className="detail-left">
+                                    {images.length > 0 ? (
+                                        images.map((img, index) => (
+                                            <div key={index} className="detail-img">
+                                                <Image
+                                                    src={img}
+                                                    alt='' />
+                                            </div>))
+                                    ) : (
+                                        '无图片'
+                                    )}
+                                </div>
+
+                                <div className="detail-right">
                                     <Typography.Paragraph
-                                        style={{ marginBottom: 0, whiteSpace: 'pre-wrap' }}
-                                        ellipsis={{ rows: 4, expandable: true, symbol: '展开' }} // ✅ 4行
+                                        style={{ whiteSpace: 'pre-wrap', marginBottom: 0, padding: 0 }}
                                     >
-                                        {data?.selfIntroduction || '-'}
+                                        {data?.content || '-'}
                                     </Typography.Paragraph>
-                                </ProDescriptions.Item>
+                                </div>
 
-                            </ProDescriptions>
+                            </div>
                         </Card>
+
 
                     </>
 
@@ -203,192 +210,147 @@ const Detail = () => {
 
 
                 {editMode && (
-                    <Card>
-                        <ProForm<Member>
-                            formRef={formRef}
-                            grid
-                            colProps={{ span: 6 }}
-                            onFinish={async (values) => {
+                    <ProForm<SoutheastAsia>
+                        formRef={formRef}
+                        submitter={{
+                            searchConfig: {
+                                submitText: '保存',
+                            },
+                        }}
+                        onFinish={async (values) => {
+                            if (!id) {
+                                message.error('参数错误,缺少东南亚ID');
+                                return;
+                            }
 
-                                if (!id) {
-                                    message.error('参数错误,缺少用户ID');
-                                    return;
-                                }
+                            const imagePath = imageList.join('|');
 
-                                await updateMember({ ...values, id }); // ✅ 包含 id
-                                setEditMode(false);
-                                getMemberDetail({ id }).then(res => setData(res.data));
-                            }}
-                        >
+                            const submitData = {
+                                ...values,
+                                id,
+                                imagePath,
+                            };
 
-                            <ProFormText
-                                name="account"
-                                label="账号"
-                                rules={[
-                                    { required: true, message: '请输入账号' },
-                                    { min: 4, max: 20, message: "账号6-20位" },
-                                    {
-                                        pattern: /^[A-Za-z0-9-]+$/,
-                                        message: '账号只能包含英文、数字和 -',
-                                    },
-                                ]}
-                                width="md"
-                                disabled={true}
-                            />
+                            console.log(submitData);
+
+                            // await updateSoutheastAsia(submitData);
+
+                            message.success('保存成功');
+                            setEditMode(false);
+                        }}
+                    >
+                        {/* 标题 */}
+                        <Card >
+                            <ProForm.Group colProps={{ span: 24 }}>
+                                <ProFormText
+                                    name="title"
+                                    label="标题"
+                                    width="lg"
+                                    rules={[
+                                        { required: true, message: '请输入标题' },
+                                        { min: 1, max: 30, message: "标题长度1-30位" },
+                                    ]}
+                                />
+                            </ProForm.Group>
+                        </Card>
 
 
-                            <ProFormText
-                                name="name"
-                                label="昵称"
-                                rules={[{
-                                    required: true,
-                                    message: '请输入昵称'
-                                }]}
-                                width="md"
-                            />
+                        {/* 基本信息 */}
+                        <Card style={{ marginTop: 10 }}>
 
-                            <ProFormSelect
-                                name="avatarPath"
-                                label="头像"
-                                width="md"
-                                options={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(i => ({
-                                    value: String(i),
-                                    label: (
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                                            <img
-                                                src={`/avatars/${i}.jpg`}
-                                                style={{ width: 35, height: 35, borderRadius: '20%' }}
-                                            />
-                                            头像{i}
+                            <ProForm.Group colProps={{ span: 4 }}>
+
+                                <ProFormText
+                                    name="source"
+                                    label="来源"
+                                    width="md"
+                                />
+
+                                <ProFormText
+                                    name="area"
+                                    label="区域"
+                                    width="md"
+                                />
+
+                                <ProFormText
+                                    name="commentsCount"
+                                    label="评论数量"
+                                    width="md"
+                                />
+
+                                <ProFormText
+                                    name="viewCount"
+                                    label="浏览次数"
+                                    width="md"
+                                />
+
+                                <ProFormSelect
+                                    name="status"
+                                    label="状态"
+                                    width="md"
+                                    valueEnum={{
+                                        false: '不显示',
+                                        true: '显示'
+                                    }}
+                                />
+
+                                <ProFormSelect
+                                    name="isTop"
+                                    label="置顶"
+                                    width="md"
+                                    valueEnum={{
+                                        false: '否',
+                                        true: '是'
+                                    }}
+                                />
+
+                                <ProFormSelect
+                                    name="isHot"
+                                    label="热门"
+                                    width="md"
+                                    valueEnum={{
+                                        false: '否',
+                                        true: '是'
+                                    }}
+                                />
+
+                            </ProForm.Group>
+
+                        </Card>
+
+                        {/* 图片 + 内容 */}
+                        <Card style={{ marginTop: 10 }}>
+                            <div className="detail-container">
+
+                                {/* 左侧图片上传 */}
+                                <div className="detail-left">
+
+                                    {imageList.map((img, index) => (
+                                        <div key={index} className="detail-img">
+                                            <Image src={img} />
                                         </div>
-                                    )
-                                }))}
-                            />
+                                    ))}
 
-                            <ProFormSelect
-                                name="gender"
-                                label="性别"
-                                valueEnum={{
-                                    1: '男',
-                                    0: '女',
-                                }}
-                                width="md"
-                            />
+                                    {/* 上传按钮 */}
+                                    <div className="upload-btn" onClick={handleUpload}>
+                                        +
+                                    </div>
 
-                            <ProFormSelect
-                                label="等级"
-                                name="level"
-                                width="md"
-                                valueEnum={{
-                                    0: '0级',
-                                    1: '1级',
-                                    2: '2级',
-                                    3: '3级',
-                                    4: '4级',
-                                    5: '5级',
-                                    6: '6级',
-                                    7: '7级',
-                                    8: '8级',
-                                    9: '9级',
-                                    10: '10级',
-                                    11: '11级',
-                                }} />
+                                </div>
 
+                                {/* 右侧内容 */}
+                                <div className="detail-right">
+                                    <ProFormTextArea
+                                        name="content"
+                                        fieldProps={{
+                                            autoSize: { minRows: 10 },
+                                        }}
+                                    />
+                                </div>
 
-                            <ProFormDatePicker
-                                name="birth"
-                                label="生日"
-                                rules={[{ required: true }]}
-                                width="md"
-                            />
-
-                            <ProFormText
-                                name="email"
-                                label="邮箱"
-                                width="md"
-                            />
-
-                            <ProFormText
-                                name="phone"
-                                label="手机"
-                                width="md"
-                            />
-
-                            <ProFormText
-                                name="tg"
-                                label="电报"
-                                width="md"
-                            />
-
-                            <ProFormText
-                                name="city"
-                                label="城市"
-                                width="md"
-                            />
-
-
-                            <ProFormText
-                                name="address"
-                                label="ip地址"
-                                width="md"
-                                disabled={true}
-                            />
-
-                            <ProFormText
-                                name="ip"
-                                label="ip"
-                                width="md"
-                                disabled={true}
-                            />
-
-
-                            <ProFormSelect
-                                name="status"
-                                label="状态"
-                                width="md"
-                                valueEnum={{
-                                    0: '禁用',
-                                    1: '正常'
-                                }}
-                            />
-
-
-
-                            {/*                             <ProFormSelect
-                                label="阵营"
-                                name="campType"
-                                width="md"
-                                options={[
-                                    { label: '无', value: '0' },
-                                    { label: '红营', value: '1' },
-                                    { label: '蓝营', value: '2' },
-                                ]}
-
-                            /> */}
-
-                            <ProFormText label="余额" name="balance" width="md" />
-
-                            <ProFormSwitch
-                                name="isBot"
-                                label="是否机器人"
-                                width="md"
-                                fieldProps={{
-                                    checkedChildren: '是',
-                                    unCheckedChildren: '否',
-                                }}
-
-                            />
-
-
-
-                            <ProFormTextArea
-                                name="selfIntroduction"
-                                label="自我介绍"
-                                colProps={{ span: 24 }}
-                                fieldProps={{ rows: 4 }}
-                            />
-                        </ProForm>
-                    </Card>
+                            </div>
+                        </Card>
+                    </ProForm>
                 )}
             </Card>
 

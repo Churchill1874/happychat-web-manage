@@ -107,6 +107,7 @@ const Login: React.FC = () => {
 
 
   const changeCaptcha = async () => {
+    console.log("请求验证")
     const resp = (await getCaptchaImage());
 
     console.log(resp.data.captchaImage)

@@ -1,14 +1,14 @@
 import { ProTable } from '@ant-design/pro-components';
-import { memberPage } from '@/services/member';
+import { southeastAsiaPage } from '@/services/southeast-asia';
 import type { ProColumns } from '@ant-design/pro-components';
 import { calcAge } from '@/utils/date';
 import './index.less'
 import { Button } from 'antd';
 import { history } from '@umijs/max';
-import { Member } from '../detail';
+import { SoutheastAsia } from '../detail';
 
 const MemberManagement: React.FC = () => {
-    const columns: ProColumns<Member>[] = [
+    const columns: ProColumns<SoutheastAsia>[] = [
         {
             title: '序号',
             align: 'center',
@@ -16,19 +16,12 @@ const MemberManagement: React.FC = () => {
             width: 40,
             search: false
         },
-        { title: '昵称', dataIndex: 'name', width: 160 },
-        { title: '账号', dataIndex: 'account', width: 160 },
+        { title: '标题', dataIndex: 'title',align: 'center',  width: 250 },
+        { title: '来源', dataIndex: 'source', width: 70, align: 'center', search: false },
         {
-            title: '性别', dataIndex: 'gender', align: 'center',
-            valueEnum: { 1: { text: '男' }, 0: { text: '女' } }, width: 70, search: false
-        },
-        { title: '生日', dataIndex: 'birth', width: 50, render: (_, record: Member) => calcAge(record.birth), search: false },
-        { title: '等级', dataIndex: 'level', width: 50, align: 'center', search: false },
-        { title: '地区', dataIndex: 'city', width: 80, search: false },
-        {
-            title: '机器人',
-            width: 70,
-            dataIndex: 'isBot',
+            title: '置顶',
+            width: 50,
+            dataIndex: 'isTop',
             align: 'center',
             valueEnum: {
                 false: { text: '否' },
@@ -36,63 +29,56 @@ const MemberManagement: React.FC = () => {
             },
             search: {
                 transform: (value) => ({
-                    isBot: value
+                    isTop: value
                 })
             },
-            render: (_, record: Member) => (
-                <span style={{ color: record.isBot ? '#610593' : 'gray' }}>
-                    {record.isBot ? '是' : '否'}
+            render: (_, record: SoutheastAsia) => (
+                <span style={{ color: record.isTop ? '#610593' : 'gray' }}>
+                    {record.isTop ? '是' : '否'}
                 </span>
             ),
         },
 
         {
-            title: '状态', dataIndex: 'status', width: 70, align: 'center',
+            title: '热门',
+            width: 50,
+            dataIndex: 'isHot',
+            align: 'center',
             valueEnum: {
-                0: { text: '禁用', status: 'error' },
-                1: { text: '正常', status: 'success' }
+                false: { text: '否' },
+                true: { text: '是' },
+            },
+            search: {
+                transform: (value) => ({
+                    isHot: value
+                })
+            },
+            render: (_, record: SoutheastAsia) => (
+                <span style={{ color: record.isHot ? '#610593' : 'gray' }}>
+                    {record.isHot ? '是' : '否'}
+                </span>
+            ),
+        },
+
+        { title: '区域', dataIndex: 'area', width: 70, align: 'center', search: false },
+        { title: '评论数量', dataIndex: 'commentsCount', align: 'center', width: 50, search: false },
+        { title: '浏览次数', dataIndex: 'viewCount', align: 'center', width: 50, search: false },
+        {
+            title: '状态', dataIndex: 'status', width: 50, align: 'center',
+            valueEnum: {
+                false: { text: '不显示', status: 'error' },
+                true: { text: '显示', status: 'success' }
             },
         },
 
-        { title: '余额', dataIndex: 'balance',align: 'center', width: 80, search: false },
-        {
-            title: '头像', align: 'center', width: 80, search: false, render: (_, record) => (
-                <img
-                    src={`/avatars/${record.avatarPath}.jpg`}
-                    style={{ width: 30, height: 30, borderRadius: '20%' }}
-                />
-            )
-        },
-        { title: '注册时间', dataIndex: 'createTime', width: 120, search: false },
-        /*         {
-                    title: '阵营',
-                    dataIndex: 'campType',
-                    align: 'center',
-                    width: 60,
-                    valueEnum: { 0: { text: "无" }, 1: { text: "红营" }, 2: { text: "蓝营" } },
-                    render: (_, record: Member) => {
-                        const map = {
-                            null: { text: '无', color: '#999' },
-                            0: { text: '无', color: '#999' },
-                            1: { text: '红营', color: 'red' },
-                            2: { text: '蓝营', color: 'blue' },
-                        };
-        
-                        const cfg = map[record.campType as '0' | '1' | '2'];
-        
-                        return (
-                            <span style={{ color: cfg?.color }}>
-                                {cfg?.text}
-                            </span>
-                        )
-                    }
-                }, */
-        // ✅ 新增：详情按钮
+        { title: '创建人', dataIndex: 'createName', width: 50,align: 'center',  search: false },
+        { title: '创建时间', dataIndex: 'createTime', width: 120, align: 'center', search: false },
+
         {
             title: '操作',
             align: 'center',
             valueType: 'option',
-            width: 70,
+            width: 40,
             fixed: 'right',
             render: (_, record) => [
                 <Button
@@ -101,7 +87,7 @@ const MemberManagement: React.FC = () => {
                     style={{ fontWeight: 600 }}
                     onClick={() => {
                         // 方式1：跳详情页（推荐）
-                        history.push(`/member/detail/${record.id}`);
+                        history.push(`/news/southeast-asia/detail/${record.id}`);
                     }}
                 >
                     详情
@@ -111,11 +97,11 @@ const MemberManagement: React.FC = () => {
     ];
 
     return (
-        <ProTable<Member>
+        <ProTable<SoutheastAsia>
             rowKey="id"
             columns={columns}
             request={async (params) => {
-                const res = await memberPage(params);
+                const res = await southeastAsiaPage(params);
                 return {
                     data: res.data.records,
                     total: res.data.total,
@@ -130,7 +116,7 @@ const MemberManagement: React.FC = () => {
                 span: 6,
                 labelWidth: 50,
                 defaultCollapsed: false,
-                className: 'compact-search', // 👈 加 class
+                className: 'compact-search', // 加 class
                 optionRender: (searchConfig, formProps, dom) => {
                     return [
                         ...dom, // 保留【查询】【重置】
@@ -140,7 +126,7 @@ const MemberManagement: React.FC = () => {
                             onClick={() => {
                                 // 新增逻辑
                                 console.log('点击新增');
-                                history.push('/member/add')
+                                history.push('/news/southeast-asia/add')
                             }}
                         >
                             新增

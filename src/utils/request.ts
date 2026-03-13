@@ -3,7 +3,11 @@ import { message } from 'antd';
 import { showError } from '@/utils/antd-message'; // ✅ 用你注入的
 import { history } from '@umijs/max';
 
-
+//白名单
+const noAuthUrls = [
+  '/api/manage/website/login',
+  '/api/manage/verificationCode/get'
+];
 export interface Resp<T = any> {
   code: number;
   msg: string;
@@ -15,6 +19,16 @@ export async function request<T = any>(
   options?: any
 ): Promise<Resp<T>> {
   const token = localStorage.getItem('token-id');
+  const isNoAuth = noAuthUrls.some(path => url.includes(path));
+
+
+
+  // ✅ 前端主动检查登录
+  if (!token && !isNoAuth) {
+    history.replace('/user/login');
+    throw new Error('未登录');
+  }
+
 
   const resp = (await umiRequest(url, {
     ...options,
