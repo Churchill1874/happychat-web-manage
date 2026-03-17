@@ -1,0 +1,120 @@
+/* ===== 全局微调 ===== */
+
+.ant-card-body {
+  padding: 5px 20px !important;
+}
+
+.ant-descriptions-item-label {
+  color: gray !important;
+}
+
+
+/* ===== 人物行布局（核心） ===== */
+
+.person-row {
+  display: flex;
+  align-items: center;   // ⭐️ 改成 center
+  gap: 40px;
+  margin-bottom: 24px;
+}
+
+
+/* 每一列（姓名 / 图片 / 语音） */
+.person-col {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  width: 180px;   // ⭐️ 固定宽度
+}
+
+
+/* ===== 上传区域 ===== */
+
+.upload-block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  //gap: 8px;
+}
+
+
+/* 上传按钮 */
+.upload-btn-exposure {
+  width: 80px;
+  height: 30px;
+
+  background: #1677ff;   // ⭐️ 蓝色
+  color: #fff;
+
+  border-radius: 4px;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.upload-btn:hover {
+  background: #4096ff;
+}
+
+/* ===== 图片区域 ===== */
+
+.img-box {
+  position: relative;
+  width: 80px;
+  //height: 80px;
+  border: 1px solid #eee;
+  border-radius: 6px;
+  padding: 4px;
+  background: #fafafa;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.img-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+
+/* 删除按钮 */
+.img-delete {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 18px;
+  height: 18px;
+  background: red;
+  color: #fff;
+  text-align: center;
+  line-height: 18px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+
+/* ===== 语音区域 ===== */
+
+.audio-box {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.audio-box audio {
+  width: 140px;
+}
+
+
+/* ===== 小标题（图片1、语音1） ===== */
+
+.upload-title {
+  font-size: 13px;
+  color: #999;
+}

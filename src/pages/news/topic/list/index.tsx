@@ -1,18 +1,18 @@
 import { ProTable } from '@ant-design/pro-components';
-import { southeastAsiaPage, deleteById } from '@/services/southeast-asia';
+import { topicPage, deleteById } from '@/services/topic';
 import type { ProColumns } from '@ant-design/pro-components';
 import './index.less'
 import { history } from '@umijs/max';
-import { SoutheastAsiaType } from '../detail';
+import { TopicType } from '../detail';
 import { Popconfirm, message, Space, App, Button } from 'antd';
 import type { ActionType } from '@ant-design/pro-components';
 import { useRef } from 'react';
 
-const SoutheastAsia: React.FC = () => {
+const Topic: React.FC = () => {
     const { modal } = App.useApp();
     const actionRef = useRef<ActionType | undefined>(undefined);
 
-    const columns: ProColumns<SoutheastAsiaType>[] = [
+    const columns: ProColumns<TopicType>[] = [
         {
             title: '序号',
             align: 'center',
@@ -21,7 +21,7 @@ const SoutheastAsia: React.FC = () => {
             search: false
         },
         { title: '标题', dataIndex: 'title', align: 'center', width: 250 },
-        { title: '来源', dataIndex: 'source', width: 70, align: 'center', search: false },
+        { title: '类型', dataIndex: 'type', width: 70, align: 'center', search: false },
         {
             title: '置顶',
             width: 50,
@@ -36,7 +36,7 @@ const SoutheastAsia: React.FC = () => {
                     isTop: value
                 })
             },
-            render: (_, record: SoutheastAsiaType) => (
+            render: (_, record: TopicType) => (
                 <span style={{ color: record.isTop ? '#610593' : 'gray' }}>
                     {record.isTop ? '是' : '否'}
                 </span>
@@ -57,14 +57,13 @@ const SoutheastAsia: React.FC = () => {
                     isHot: value
                 })
             },
-            render: (_, record: SoutheastAsiaType) => (
+            render: (_, record: TopicType) => (
                 <span style={{ color: record.isHot ? '#610593' : 'gray' }}>
                     {record.isHot ? '是' : '否'}
                 </span>
             ),
         },
 
-        { title: '区域', dataIndex: 'area', width: 70, align: 'center', search: false },
         { title: '评论数量', dataIndex: 'commentsCount', align: 'center', width: 50, search: false },
         { title: '浏览次数', dataIndex: 'viewCount', align: 'center', width: 50, search: false },
         {
@@ -88,7 +87,7 @@ const SoutheastAsia: React.FC = () => {
                 <Space>
                     <a
                         onClick={() => {
-                            history.push(`/news/southeast-asia/detail/${record.id}`);
+                            history.push(`/news/topic/detail/${record.id}`);
                         }}
                     >
                         详情
@@ -121,12 +120,12 @@ const SoutheastAsia: React.FC = () => {
     ];
 
     return (
-        <ProTable<SoutheastAsiaType>
+        <ProTable<TopicType>
             actionRef={actionRef}
             rowKey="id"
             columns={columns}
             request={async (params) => {
-                const res = await southeastAsiaPage(params);
+                const res = await topicPage(params);
                 return {
                     data: res.data.records,
                     total: res.data.total,
@@ -151,7 +150,7 @@ const SoutheastAsia: React.FC = () => {
                             onClick={() => {
                                 // 新增逻辑
                                 console.log('点击新增');
-                                history.push('/news/southeast-asia/add')
+                                history.push('/news/topic/add')
                             }}
                         >
                             新增
@@ -182,4 +181,4 @@ const SoutheastAsia: React.FC = () => {
     );
 };
 
-export default SoutheastAsia;
+export default Topic;

@@ -99,10 +99,10 @@ export default [
     icon: 'team',
     name: 'news',
     routes: [
-       {
+      {
         path: '/news',
         redirect: '/news/southeast-asia/list',
-      }, 
+      },
       {
         name: 'southeast-asia',
         icon: 'team',
@@ -116,6 +116,40 @@ export default [
       {
         path: '/news/southeast-asia/detail/:id',//详情页
         component: './news/southeast-asia/detail',
+        hideInMenu: false,
+      },
+
+      //话题
+      {
+        name: 'topic',
+        icon: 'team',
+        path: '/news/topic/list',
+        component: './news/topic/list'
+      },
+      {
+        path: '/news/topic/add',// ✅ 新增页
+        component: './news/topic/add'
+      },
+      {
+        path: '/news/topic/detail/:id',//详情页
+        component: './news/topic/detail',
+        hideInMenu: false,
+      },
+
+      //曝光
+      {
+        name: 'exposure',
+        icon: 'team',
+        path: '/news/exposure/list',
+        component: './news/exposure/list'
+      },
+      {
+        path: '/news/exposure/add',// ✅ 新增页
+        component: './news/exposure/add'
+      },
+      {
+        path: '/news/exposure/detail/:id',//详情页
+        component: './news/exposure/detail',
         hideInMenu: false,
       },
     ]

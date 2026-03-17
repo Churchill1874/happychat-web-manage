@@ -1,18 +1,18 @@
 import { ProTable } from '@ant-design/pro-components';
-import { southeastAsiaPage, deleteById } from '@/services/southeast-asia';
+import { exposurePage, deleteById } from '@/services/exposure';
 import type { ProColumns } from '@ant-design/pro-components';
 import './index.less'
 import { history } from '@umijs/max';
-import { SoutheastAsiaType } from '../detail';
-import { Popconfirm, message, Space, App, Button } from 'antd';
+import { ExposureType } from '../detail';
+import { message, Space, App, Button } from 'antd';
 import type { ActionType } from '@ant-design/pro-components';
 import { useRef } from 'react';
 
-const SoutheastAsia: React.FC = () => {
+const Exposure: React.FC = () => {
     const { modal } = App.useApp();
     const actionRef = useRef<ActionType | undefined>(undefined);
 
-    const columns: ProColumns<SoutheastAsiaType>[] = [
+    const columns: ProColumns<ExposureType>[] = [
         {
             title: '序号',
             align: 'center',
@@ -21,7 +21,6 @@ const SoutheastAsia: React.FC = () => {
             search: false
         },
         { title: '标题', dataIndex: 'title', align: 'center', width: 250 },
-        { title: '来源', dataIndex: 'source', width: 70, align: 'center', search: false },
         {
             title: '置顶',
             width: 50,
@@ -36,46 +35,17 @@ const SoutheastAsia: React.FC = () => {
                     isTop: value
                 })
             },
-            render: (_, record: SoutheastAsiaType) => (
+            render: (_, record: ExposureType) => (
                 <span style={{ color: record.isTop ? '#610593' : 'gray' }}>
                     {record.isTop ? '是' : '否'}
                 </span>
             ),
         },
 
-        {
-            title: '热门',
-            width: 50,
-            dataIndex: 'isHot',
-            align: 'center',
-            valueEnum: {
-                false: { text: '否' },
-                true: { text: '是' },
-            },
-            search: {
-                transform: (value) => ({
-                    isHot: value
-                })
-            },
-            render: (_, record: SoutheastAsiaType) => (
-                <span style={{ color: record.isHot ? '#610593' : 'gray' }}>
-                    {record.isHot ? '是' : '否'}
-                </span>
-            ),
-        },
-
-        { title: '区域', dataIndex: 'area', width: 70, align: 'center', search: false },
-        { title: '评论数量', dataIndex: 'commentsCount', align: 'center', width: 50, search: false },
-        { title: '浏览次数', dataIndex: 'viewCount', align: 'center', width: 50, search: false },
-        {
-            title: '状态', dataIndex: 'status', width: 50, align: 'center',
-            valueEnum: {
-                false: { text: '不显示', status: 'error' },
-                true: { text: '显示', status: 'success' }
-            },
-        },
-
-        { title: '创建人', dataIndex: 'createName', width: 50, align: 'center', search: false },
+        { title: '区域', dataIndex: 'address', width: 70, align: 'center', search: false },
+        { title: '浏览次数', dataIndex: 'viewsCount', align: 'center', width: 50, search: false },
+        { title: '等级', dataIndex: 'level', width: 50, align: 'center', search: false },
+         { title: '创建人', dataIndex: 'createName', width: 50, align: 'center', search: false },
         { title: '创建时间', dataIndex: 'createTime', width: 120, align: 'center', search: false },
 
         {
@@ -88,7 +58,7 @@ const SoutheastAsia: React.FC = () => {
                 <Space>
                     <a
                         onClick={() => {
-                            history.push(`/news/southeast-asia/detail/${record.id}`);
+                            history.push(`/news/exposure/detail/${record.id}`);
                         }}
                     >
                         详情
@@ -121,12 +91,12 @@ const SoutheastAsia: React.FC = () => {
     ];
 
     return (
-        <ProTable<SoutheastAsiaType>
+        <ProTable<ExposureType>
             actionRef={actionRef}
             rowKey="id"
             columns={columns}
             request={async (params) => {
-                const res = await southeastAsiaPage(params);
+                const res = await exposurePage(params);
                 return {
                     data: res.data.records,
                     total: res.data.total,
@@ -151,7 +121,7 @@ const SoutheastAsia: React.FC = () => {
                             onClick={() => {
                                 // 新增逻辑
                                 console.log('点击新增');
-                                history.push('/news/southeast-asia/add')
+                                history.push('/news/exposure/add')
                             }}
                         >
                             新增
@@ -182,4 +152,4 @@ const SoutheastAsia: React.FC = () => {
     );
 };
 
-export default SoutheastAsia;
+export default Exposure;

@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { request } from '@/utils/request';
 import './index.less';
 
-const MemberAdd = () => {
+const TopicAdd = () => {
     const [imageList, setImageList] = useState<string[]>([]);
 
     const handleUpload = async () => {
@@ -179,4 +179,4 @@ const MemberAdd = () => {
     );
 };
 
-export default MemberAdd;
+export default TopicAdd;

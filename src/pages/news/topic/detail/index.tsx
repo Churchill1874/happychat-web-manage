@@ -1,6 +1,6 @@
 import { useParams, history } from '@umijs/max';
 import { useEffect, useState, useRef } from 'react';
-import { getSoutheastAsiaDetail } from '@/services/southeast-asia';
+import { getTopicDetail, update } from '@/services/topic';
 import {
     ProDescriptions,
     ProForm,
@@ -14,18 +14,19 @@ import {
 import { Card, Typography, message, Button, Space, Image } from 'antd';
 import './index.less';
 import { request } from '@/utils/request';
-import { update } from '@/services/southeast-asia';
-import { getImgUrl } from '@/utils/tools';
-export interface SoutheastAsiaType {
+import { getImgUrl } from '@/utils/tools'; 
+
+export interface TopicType {
     id: string; // Long → string（后端用了 ToStringSerializer）
-    source: string;
+    type: string;
     content: string;
     imagePath: string;
     viewCount: string;
     commentsCount: string;
     isTop: string;
     isHot: string;
-    area: string;
+    videoPath: string;
+    videoCover: string;
     status: string;
     title: string;
     createTime: string;
@@ -34,20 +35,24 @@ export interface SoutheastAsiaType {
 
 const Detail = () => {
     const { id } = useParams<{ id: string }>();
-    const [data, setData] = useState<SoutheastAsiaType>();
+    const [data, setData] = useState<TopicType>();
     const [loading, setLoading] = useState(false);
     const [editMode, setEditMode] = useState(false);
     const formRef = useRef<ProFormInstance | null>(null);
     const images = data?.imagePath?.split('|').filter(Boolean) || [];
     const [imageList, setImageList] = useState<string[]>([]);
+    const [videoCover, setVideoCover] = useState<string>();
+    const [videoPath, setVideoPath] = useState<string>();
 
+    const showVideoCover = videoCover || data?.videoCover;
+    const showVideoPath = videoPath || data?.videoPath;
 
     const detailReq = async () => {
         if (!id) return;
 
         setLoading(true);
         try {
-            const res = await getSoutheastAsiaDetail({ id });
+            const res = await getTopicDetail({ id });
             setData(res.data);
         } finally {
             setLoading(false);
@@ -78,6 +83,62 @@ const Detail = () => {
         }
     }, [data]);
 
+    const handleUploadVideo = async () => {
+
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = 'video/*';
+
+        input.onchange = async () => {
+
+            const file = input.files?.[0];
+            if (!file) return;
+
+            const formData = new FormData();
+            formData.append("file", file);
+
+            const resp = await request<string>('/api/manage/tools/upload', {
+                method: 'POST',
+                data: formData,
+            });
+
+            setVideoPath(resp.data);
+
+            message.success("视频上传成功");
+        };
+
+        input.click();
+    };
+
+
+    const handleUploadVideoCover = async () => {
+
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = 'image/*';
+
+        input.onchange = async () => {
+
+            const file = input.files?.[0];
+            if (!file) return;
+
+            const formData = new FormData();
+            formData.append("file", file);
+
+            const resp = await request<string>('/api/manage/tools/upload', {
+                method: 'POST',
+                data: formData,
+            });
+
+            setVideoCover(resp.data);
+
+            message.success("封面上传成功");
+        };
+
+        input.click();
+    };
+
+
     const handleUpload = async () => {
 
         const input = document.createElement('input');
@@ -105,11 +166,11 @@ const Detail = () => {
     return (
         <>
             <Card
-                title="东南亚新闻详情"
+                title="话题详情"
                 extra={
                     <Space>
                         <Button
-                            onClick={() => history.push('/news/southeast-asia/list')}
+                            onClick={() => history.push('/news/topic/list')}
                         >
                             返回
                         </Button>
@@ -126,6 +187,7 @@ const Detail = () => {
                                 修改
                             </Button>
                         )}
+
                     </Space>
                 }
 
@@ -136,7 +198,7 @@ const Detail = () => {
                     <>
 
                         <Card >
-                            <ProDescriptions<SoutheastAsiaType>
+                            <ProDescriptions<TopicType>
                                 loading={loading}
                                 dataSource={data}
                                 column={16}
@@ -147,13 +209,12 @@ const Detail = () => {
                         </Card>
 
                         <Card style={{ marginTop: 10 }}>
-                            <ProDescriptions<SoutheastAsiaType>
+                            <ProDescriptions<TopicType>
                                 loading={loading}
                                 dataSource={data}
                                 column={5}
                             >
-                                <ProDescriptions.Item label="来源" dataIndex="source" />
-                                <ProDescriptions.Item label="区域" dataIndex="area" />
+                                <ProDescriptions.Item label="类型" dataIndex="type" />
                                 <ProDescriptions.Item label="评论数量" dataIndex="commentsCount" />
                                 <ProDescriptions.Item label="浏览次数" dataIndex="viewCount" />
                                 <ProDescriptions.Item
@@ -164,6 +225,7 @@ const Detail = () => {
                                         true: { text: '显示', status: 'Success' },
                                     }}
                                 />
+
                                 <ProDescriptions.Item
                                     label="置顶"
                                     dataIndex="isTop"
@@ -180,6 +242,7 @@ const Detail = () => {
                                         true: { text: '是', status: 'Success' },
                                     }}
                                 />
+
                                 <ProDescriptions.Item label="创建人" dataIndex="createName" />
                                 <ProDescriptions.Item label="创建时间" dataIndex="createTime" />
                             </ProDescriptions>
@@ -188,16 +251,20 @@ const Detail = () => {
 
 
                         <Card style={{ marginTop: 10 }}>
-                            <div className="detail-container">
 
+                            <div className="section-title">图片与内容</div>
+
+                            <div className="detail-container">
                                 <div className="detail-left">
                                     {images.length > 0 ? (
                                         images.map((img, index) => (
                                             <div key={index} className="detail-img">
                                                 <Image
+                                                    style={{ padding: '10px 70px' }}
                                                     src={getImgUrl(img)}
                                                     alt='' />
-                                            </div>))
+                                            </div>
+                                        ))
                                     ) : (
                                         '无图片'
                                     )}
@@ -214,6 +281,49 @@ const Detail = () => {
                             </div>
                         </Card>
 
+                        <Card style={{ marginTop: 10 }}>
+
+                            <div className="detail-container">
+
+                                {/* 左侧封面 */}
+                                <div className="detail-left">
+
+                                    <div className="media-title">封面图片</div>
+
+
+                                    {data?.videoCover ? (
+                                        <Image
+                                            src={data.videoCover}
+                                            style={{ width: 300 }}
+                                        />
+                                    ) : (
+                                        '暂无封面'
+                                    )}
+
+                                </div>
+
+                                {/* 右侧视频 */}
+                                <div className="detail-right">
+
+                                    <div className="media-title">视频</div>
+
+                                    {data?.videoPath ? (
+                                        <video
+                                            src={data.videoPath}
+                                            controls
+                                            style={{ width: "100%", maxWidth: 300 }}
+                                        />
+                                    ) : (
+                                        '暂无视频'
+                                    )}
+
+                                </div>
+
+                            </div>
+
+                        </Card>
+
+
 
                     </>
 
@@ -221,7 +331,7 @@ const Detail = () => {
 
 
                 {editMode && (
-                    <ProForm<SoutheastAsiaType>
+                    <ProForm<TopicType>
                         formRef={formRef}
                         submitter={{
                             searchConfig: {
@@ -230,7 +340,7 @@ const Detail = () => {
                         }}
                         onFinish={async (values) => {
                             if (!id) {
-                                message.error('参数错误,缺少东南亚ID');
+                                message.error('参数错误,缺少话题ID');
                                 return;
                             }
 
@@ -240,6 +350,8 @@ const Detail = () => {
                                 ...values,
                                 id,
                                 imagePath,
+                                videoCover: videoCover ?? data?.videoCover,
+                                videoPath: videoPath ?? data?.videoPath
                             };
 
                             console.log(submitData);
@@ -253,7 +365,7 @@ const Detail = () => {
                             setEditMode(false);
                         }}
                     >
-                        {/* 标题 */}
+
                         <Card >
                             <ProForm.Group colProps={{ span: 24 }}>
                                 <ProFormText
@@ -275,14 +387,8 @@ const Detail = () => {
                             <ProForm.Group colProps={{ span: 4 }}>
 
                                 <ProFormText
-                                    name="source"
-                                    label="来源"
-                                    width="md"
-                                />
-
-                                <ProFormText
-                                    name="area"
-                                    label="区域"
+                                    name="type"
+                                    label="类型"
                                     width="md"
                                 />
 
@@ -328,9 +434,11 @@ const Detail = () => {
 
                         {/* 图片 + 内容 */}
                         <Card style={{ marginTop: 10 }}>
+
                             <div className="detail-container">
 
                                 {/* 左侧图片上传 */}
+
                                 <div className="detail-left">
 
                                     {imageList.map((img, index) => (
@@ -357,6 +465,7 @@ const Detail = () => {
 
                                 </div>
 
+
                                 {/* 右侧内容 */}
                                 <div className="detail-right">
                                     <ProFormTextArea
@@ -369,6 +478,103 @@ const Detail = () => {
 
                             </div>
                         </Card>
+
+                        <Card style={{ marginTop: 10 }}>
+
+                            <div className="detail-container">
+
+                                {/* 左侧：封面 */}
+                                <div className="detail-left">
+
+                                    <div className="media-title">封面图片</div>
+
+                                    <div className="video-box">
+
+                                        {showVideoCover ? (
+                                            <Image
+                                                src={showVideoCover}
+                                                className="video-cover-img"
+                                            />
+                                        ) : (
+                                            <div className="video-empty">暂无封面</div>
+                                        )}
+
+                                        <div className="video-btn-group">
+
+                                            <Button onClick={handleUploadVideoCover}>
+                                                上传封面
+                                            </Button>
+
+                                            {showVideoCover && (
+                                                <Button
+                                                    danger
+                                                    onClick={() => {
+                                                        setVideoCover('');
+                                                        setData(prev => ({
+                                                            ...prev!,
+                                                            videoCover: ''
+                                                        }));
+                                                    }}
+                                                >
+                                                    清除
+                                                </Button>
+                                            )}
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+
+                                {/* 右侧：视频 */}
+                                <div className="detail-right">
+
+                                    <div className="media-title">视频</div>
+
+                                    <div className="video-box">
+
+                                        {showVideoPath ? (
+                                            <video
+                                                src={showVideoPath}
+                                                controls
+                                                className="video-player"
+                                            />
+                                        ) : (
+                                            <div className="video-empty">暂无视频</div>
+                                        )}
+
+                                        <div className="video-btn-group">
+
+                                            <Button onClick={handleUploadVideo}>
+                                                上传视频
+                                            </Button>
+
+                                            {showVideoPath && (
+                                                <Button
+                                                    danger
+                                                    onClick={() => {
+                                                        setVideoPath('');
+                                                        setData(prev => ({
+                                                            ...prev!,
+                                                            videoPath: ''
+                                                        }));
+                                                    }}
+                                                >
+                                                    清除
+                                                </Button>
+                                            )}
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </Card>
+
                     </ProForm>
                 )}
             </Card>
