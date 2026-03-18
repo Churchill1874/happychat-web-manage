@@ -20,6 +20,7 @@ const Topic: React.FC = () => {
             width: 40,
             search: false
         },
+        { title: 'ID', dataIndex: 'id', align: 'center', width: 50 },
         { title: '标题', dataIndex: 'title', align: 'center', width: 250 },
         { title: '类型', dataIndex: 'type', width: 70, align: 'center', search: false },
         {
@@ -94,7 +95,7 @@ const Topic: React.FC = () => {
                     </a>
 
                     <a
-                        style={{ marginLeft:'20px', color: '#ff4d4f' }}
+                        style={{ marginLeft: '20px', color: '#ff4d4f' }}
                         onClick={() => {
                             console.log("delete click");
 

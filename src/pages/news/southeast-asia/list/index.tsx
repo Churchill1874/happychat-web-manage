@@ -20,11 +20,12 @@ const SoutheastAsia: React.FC = () => {
             width: 40,
             search: false
         },
+        { title: 'ID', dataIndex: 'id', align: 'center', width: 50 },
         { title: '标题', dataIndex: 'title', align: 'center', width: 250 },
-        { title: '来源', dataIndex: 'source', width: 70, align: 'center', search: false },
+        { title: '来源', dataIndex: 'source', width: 60, align: 'center', search: false },
         {
             title: '置顶',
-            width: 50,
+            width: 30,
             dataIndex: 'isTop',
             align: 'center',
             valueEnum: {
@@ -45,7 +46,7 @@ const SoutheastAsia: React.FC = () => {
 
         {
             title: '热门',
-            width: 50,
+            width: 30,
             dataIndex: 'isHot',
             align: 'center',
             valueEnum: {
@@ -95,7 +96,7 @@ const SoutheastAsia: React.FC = () => {
                     </a>
 
                     <a
-                        style={{ marginLeft:'20px', color: '#ff4d4f' }}
+                        style={{ marginLeft: '20px', color: '#ff4d4f' }}
                         onClick={() => {
                             console.log("delete click");
 

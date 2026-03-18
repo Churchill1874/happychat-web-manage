@@ -20,6 +20,7 @@ const Exposure: React.FC = () => {
             width: 40,
             search: false
         },
+        { title: 'ID', dataIndex: 'id', align: 'center', width: 50 },
         { title: '标题', dataIndex: 'title', align: 'center', width: 250 },
         {
             title: '置顶',
@@ -45,7 +46,7 @@ const Exposure: React.FC = () => {
         { title: '区域', dataIndex: 'address', width: 70, align: 'center', search: false },
         { title: '浏览次数', dataIndex: 'viewsCount', align: 'center', width: 50, search: false },
         { title: '等级', dataIndex: 'level', width: 50, align: 'center', search: false },
-         { title: '创建人', dataIndex: 'createName', width: 50, align: 'center', search: false },
+        { title: '创建人', dataIndex: 'createName', width: 50, align: 'center', search: false },
         { title: '创建时间', dataIndex: 'createTime', width: 120, align: 'center', search: false },
 
         {
@@ -65,7 +66,7 @@ const Exposure: React.FC = () => {
                     </a>
 
                     <a
-                        style={{ marginLeft:'20px', color: '#ff4d4f' }}
+                        style={{ marginLeft: '20px', color: '#ff4d4f' }}
                         onClick={() => {
                             console.log("delete click");
 

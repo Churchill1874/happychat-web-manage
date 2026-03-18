@@ -38,7 +38,8 @@ const Detail = () => {
     const [loading, setLoading] = useState(false);
     const [editMode, setEditMode] = useState(false);
     const formRef = useRef<ProFormInstance | null>(null);
-    const images = data?.imagePath?.split('|').filter(Boolean) || [];
+    const images = data?.imagePath?.split('||').filter(Boolean) || [];
+    console.log(images)
     const [imageList, setImageList] = useState<string[]>([]);
 
 
@@ -74,7 +75,7 @@ const Detail = () => {
 
     useEffect(() => {
         if (data?.imagePath) {
-            setImageList(data.imagePath.split('|').filter(Boolean));
+            setImageList(data.imagePath.split('||').filter(Boolean));
         }
     }, [data]);
 
@@ -234,7 +235,7 @@ const Detail = () => {
                                 return;
                             }
 
-                            const imagePath = imageList.join('|');
+                            const imagePath = imageList.join('||');
 
                             const submitData = {
                                 ...values,

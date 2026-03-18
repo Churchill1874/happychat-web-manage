@@ -178,6 +178,9 @@ const ExposureAdd = () => {
                                 <div className="person-col">
                                     <div className="upload-block">
 
+                                        {/* ✅ 注册字段 */}
+                                        <ProFormText name={imageKey} hidden />
+
                                         {/* 预览 */}
                                         <ProForm.Item shouldUpdate style={{ marginBottom: 0 }}>
                                             {() => {
@@ -215,7 +218,7 @@ const ExposureAdd = () => {
                                 </div>
 
                                 {/* 语音 */}
-{/*                                 <div className="person-col">
+                                {/*                                 <div className="person-col">
                                     <div className="upload-block">
 
                                         <ProForm.Item shouldUpdate style={{ marginBottom: 0 }}>

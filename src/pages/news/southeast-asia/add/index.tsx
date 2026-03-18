@@ -34,7 +34,7 @@ const TopicAdd = () => {
     };
 
     const handleFinish = async (values: any) => {
-        const imagePath = imageList.join('|');
+        const imagePath = imageList.join('||');
 
         const submitData = {
             ...values,
