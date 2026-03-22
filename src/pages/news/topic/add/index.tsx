@@ -5,6 +5,7 @@ import { addTopic } from '@/services/topic';
 import { useState } from 'react';
 import { request } from '@/utils/request';
 import './index.less';
+import { getImgUrl } from '@/utils/tools';
 
 const TopicAdd = () => {
 
@@ -208,7 +209,7 @@ const TopicAdd = () => {
                             {imageList.map((img, index) => (
                                 <div key={index} className="detail-img">
 
-                                    <Image src={img} style={{ padding: 10 }} />
+                                    <Image src={getImgUrl(img)} style={{ padding: 10 }} />
 
                                     <div
                                         className="img-delete"

@@ -152,6 +152,25 @@ export default [
         component: './news/exposure/detail',
         hideInMenu: false,
       },
+
+      
+      //社会
+      {
+        name: 'society',
+        icon: 'team',
+        path: '/news/society/list',
+        component: './news/society/list'
+      },
+      {
+        path: '/news/society/add',// ✅ 新增页
+        component: './news/society/add'
+      },
+      {
+        path: '/news/society/detail/:id',//详情页
+        component: './news/society/detail',
+        hideInMenu: false,
+      },
+
     ]
   },
   {

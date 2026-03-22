@@ -195,8 +195,7 @@ const Detail = () => {
                                                     src={getImgUrl(img as string)}
                                                     width={100}
                                                     height={100}
-                                                    style={{ objectFit: 'cover', borderRadius: 6 }}
-                                                />
+                                                    style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                                             ) : (
                                                 <div className="img-box">无图片</div>
                                             )}
@@ -316,7 +315,7 @@ const Detail = () => {
                                                     const img = formRef.current?.getFieldValue(imageKey);
                                                     return img ? (
                                                         <div className="img-box">
-                                                            <img src={getImgUrl(img)} />
+                                                            <Image src={getImgUrl(img)} />
                                                             <div
                                                                 className="img-delete"
                                                                 onClick={() => {

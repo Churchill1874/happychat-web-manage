@@ -1,14 +1,12 @@
 import { useParams, history } from '@umijs/max';
 import { useEffect, useState, useRef } from 'react';
-import { getTopicDetail, update } from '@/services/topic';
+import { getSocietyDetail, update } from '@/services/society';
 import {
     ProDescriptions,
     ProForm,
     ProFormText,
     ProFormSelect,
-    ProFormSwitch,
     ProFormTextArea,
-    ProFormDatePicker,
     ProFormInstance
 } from '@ant-design/pro-components';
 import { Card, Typography, message, Button, Space, Image } from 'antd';
@@ -16,9 +14,9 @@ import './index.less';
 import { request } from '@/utils/request';
 import { getImgUrl } from '@/utils/tools';
 
-export interface TopicType {
+export interface SocietyType {
     id: string; // Long → string（后端用了 ToStringSerializer）
-    type: string;
+    source: string;
     content: string;
     imagePath: string;
     viewCount: string;
@@ -28,14 +26,15 @@ export interface TopicType {
     videoPath: string;
     videoCover: string;
     status: string;
-    title: string;
+    area: string;
     createTime: string;
     createName?: string;
+    title: string;
 }
 
 const Detail = () => {
     const { id } = useParams<{ id: string }>();
-    const [data, setData] = useState<TopicType>();
+    const [data, setData] = useState<SocietyType>();
     const [loading, setLoading] = useState(false);
     const [editMode, setEditMode] = useState(false);
     const formRef = useRef<ProFormInstance | null>(null);
@@ -52,7 +51,7 @@ const Detail = () => {
 
         setLoading(true);
         try {
-            const res = await getTopicDetail({ id });
+            const res = await getSocietyDetail({ id });
             setData(res.data);
         } finally {
             setLoading(false);
@@ -77,11 +76,13 @@ const Detail = () => {
         detailReq();
     }, [id])
 
+
     useEffect(() => {
         if (data?.imagePath && imageList.length === 0) {
             setImageList(data.imagePath.split('|').filter(Boolean));
         }
     }, [data]);
+
     const handleUploadVideo = async () => {
 
         const input = document.createElement('input');
@@ -165,11 +166,11 @@ const Detail = () => {
     return (
         <>
             <Card
-                title="话题详情"
+                title="社会详情"
                 extra={
                     <Space>
                         <Button
-                            onClick={() => history.push('/news/topic/list')}
+                            onClick={() => history.push('/news/society/list')}
                         >
                             返回
                         </Button>
@@ -197,7 +198,7 @@ const Detail = () => {
                     <>
 
                         <Card >
-                            <ProDescriptions<TopicType>
+                            <ProDescriptions<SocietyType>
                                 loading={loading}
                                 dataSource={data}
                                 column={16}
@@ -208,12 +209,12 @@ const Detail = () => {
                         </Card>
 
                         <Card style={{ marginTop: 10 }}>
-                            <ProDescriptions<TopicType>
+                            <ProDescriptions<SocietyType>
                                 loading={loading}
                                 dataSource={data}
                                 column={5}
                             >
-                                <ProDescriptions.Item label="类型" dataIndex="type" />
+                                <ProDescriptions.Item label="来源" dataIndex="source" />
                                 <ProDescriptions.Item label="评论数量" dataIndex="commentsCount" />
                                 <ProDescriptions.Item label="浏览次数" dataIndex="viewCount" />
                                 <ProDescriptions.Item
@@ -330,7 +331,7 @@ const Detail = () => {
 
 
                 {editMode && (
-                    <ProForm<TopicType>
+                    <ProForm<SocietyType>
                         formRef={formRef}
                         submitter={{
                             searchConfig: {
@@ -373,7 +374,7 @@ const Detail = () => {
                                     width="lg"
                                     rules={[
                                         { required: true, message: '请输入标题' },
-                                        { min: 1, max: 30, message: "标题长度1-30位" },
+                                        { min: 1, max: 40, message: "标题长度1-40位" },
                                     ]}
                                 />
                             </ProForm.Group>
@@ -386,8 +387,8 @@ const Detail = () => {
                             <ProForm.Group colProps={{ span: 4 }}>
 
                                 <ProFormText
-                                    name="type"
-                                    label="类型"
+                                    name="source"
+                                    label="来源"
                                     width="md"
                                 />
 
@@ -491,7 +492,7 @@ const Detail = () => {
 
                                         {showVideoCover ? (
                                             <Image
-                                                src={getImgUrl(showVideoCover)}
+                                                src={showVideoCover}
                                                 className="video-cover-img"
                                             />
                                         ) : (
