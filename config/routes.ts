@@ -116,7 +116,7 @@ export default [
       {
         path: '/news/southeast-asia/detail/:id',//详情页
         component: './news/southeast-asia/detail',
-        hideInMenu: false,
+        hideInMenu: true,
       },
 
       //话题
@@ -133,7 +133,7 @@ export default [
       {
         path: '/news/topic/detail/:id',//详情页
         component: './news/topic/detail',
-        hideInMenu: false,
+        hideInMenu: true,
       },
 
       //曝光
@@ -150,7 +150,7 @@ export default [
       {
         path: '/news/exposure/detail/:id',//详情页
         component: './news/exposure/detail',
-        hideInMenu: false,
+        hideInMenu: true,
       },
 
 
@@ -168,7 +168,7 @@ export default [
       {
         path: '/news/society/detail/:id',//详情页
         component: './news/society/detail',
-        hideInMenu: false,
+        hideInMenu: true,
       },
 
       //政治
@@ -185,7 +185,7 @@ export default [
       {
         path: '/news/politics/detail/:id',//详情页
         component: './news/politics/detail',
-        hideInMenu: false,
+        hideInMenu: true,
       },
       //国内新闻
       {
@@ -201,7 +201,23 @@ export default [
       {
         path: '/news/news/detail/:id',//详情页
         component: './news/news/detail',
-        hideInMenu: false,
+        hideInMenu: true,
+      },
+      //公司新闻
+      {
+        name: 'company',
+        icon: 'team',
+        path: '/news/company/list',
+        component: './news/company/list'
+      },
+      {
+        path: '/news/company/add',// ✅ 新增页
+        component: './news/company/add'
+      },
+      {
+        path: '/news/company/detail/:id',//详情页
+        component: './news/company/detail',
+        hideInMenu: true,
       },
 
     ]
