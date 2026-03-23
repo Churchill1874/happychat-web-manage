@@ -1,6 +1,6 @@
 import { useParams, history } from '@umijs/max';
 import { useEffect, useState, useRef } from 'react';
-import { getSoutheastAsiaDetail } from '@/services/southeast-asia';
+import { getPoliticsDetail, update } from '@/services/politics';
 import {
     ProDescriptions,
     ProForm,
@@ -14,27 +14,25 @@ import {
 import { Card, Typography, message, Button, Space, Image } from 'antd';
 import './index.less';
 import { request } from '@/utils/request';
-import { update } from '@/services/southeast-asia';
 import { getImgUrl } from '@/utils/tools';
-export interface SoutheastAsiaType {
+export interface PoliticsType {
     id: string; // Long → string（后端用了 ToStringSerializer）
-    source: string;
-    content: string;
-    imagePath: string;
-    viewCount: string;
-    commentsCount: string;
-    isTop: string;
-    isHot: string;
-    area: string;
-    status: string;
     title: string;
+    content: string;
+    viewCount: string;
+    likesCount: string;
+    commentsCount: string;
+    newsStatus: string;
+    imagePath: string;
+    country: string;
+    source: string;
     createTime: string;
     createName?: string;
 }
 
 const Detail = () => {
     const { id } = useParams<{ id: string }>();
-    const [data, setData] = useState<SoutheastAsiaType>();
+    const [data, setData] = useState<PoliticsType>();
     const [loading, setLoading] = useState(false);
     const [editMode, setEditMode] = useState(false);
     const formRef = useRef<ProFormInstance | null>(null);
@@ -48,7 +46,7 @@ const Detail = () => {
 
         setLoading(true);
         try {
-            const res = await getSoutheastAsiaDetail({ id });
+            const res = await getPoliticsDetail({ id });
             setData(res.data);
         } finally {
             setLoading(false);
@@ -62,9 +60,7 @@ const Detail = () => {
 
         formRef.current?.setFieldsValue({
             ...data,
-            status: data.status?.toString(),
-            isTop: data.isTop?.toString(),
-            isHot: data.isHot?.toString()
+            newsStatus: data.newsStatus?.toString()
         });
 
     }, [editMode, data]);
@@ -106,11 +102,11 @@ const Detail = () => {
     return (
         <>
             <Card
-                title="东南亚新闻详情"
+                title="政治新闻详情"
                 extra={
                     <Space>
                         <Button
-                            onClick={() => history.push('/news/southeast-asia/list')}
+                            onClick={() => history.push('/news/politics/list')}
                         >
                             返回
                         </Button>
@@ -137,7 +133,7 @@ const Detail = () => {
                     <>
 
                         <Card >
-                            <ProDescriptions<SoutheastAsiaType>
+                            <ProDescriptions<PoliticsType>
                                 loading={loading}
                                 dataSource={data}
                                 column={8}
@@ -148,37 +144,23 @@ const Detail = () => {
                         </Card>
 
                         <Card style={{ marginTop: 10 }}>
-                            <ProDescriptions<SoutheastAsiaType>
+                            <ProDescriptions<PoliticsType>
                                 loading={loading}
                                 dataSource={data}
                                 column={5}
                             >
                                 <ProDescriptions.Item label="来源" dataIndex="source" />
-                                <ProDescriptions.Item label="区域" dataIndex="area" />
+                                <ProDescriptions.Item label="国家" dataIndex="country" />
                                 <ProDescriptions.Item label="评论数量" dataIndex="commentsCount" />
                                 <ProDescriptions.Item label="浏览次数" dataIndex="viewCount" />
+                                <ProDescriptions.Item label="点赞数量" dataIndex="likesCount" />
                                 <ProDescriptions.Item
-                                    label="状态"
-                                    dataIndex="status"
+                                    label="新闻状态"
+                                    dataIndex="newsStatus"
                                     valueEnum={{
-                                        false: { text: '不显示', status: 'Error' },
-                                        true: { text: '显示', status: 'Success' },
-                                    }}
-                                />
-                                <ProDescriptions.Item
-                                    label="置顶"
-                                    dataIndex="isTop"
-                                    valueEnum={{
-                                        false: { text: '否', status: 'Error' },
-                                        true: { text: '是', status: 'Success' },
-                                    }}
-                                />
-                                <ProDescriptions.Item
-                                    label="热门"
-                                    dataIndex="isHot"
-                                    valueEnum={{
-                                        false: { text: '否', status: 'Error' },
-                                        true: { text: '是', status: 'Success' },
+                                        1: { text: '普通' },
+                                        2: { text: '置顶' },
+                                        3: { text: '热门' }
                                     }}
                                 />
                                 <ProDescriptions.Item label="创建人" dataIndex="createName" />
@@ -222,7 +204,7 @@ const Detail = () => {
 
 
                 {editMode && (
-                    <ProForm<SoutheastAsiaType>
+                    <ProForm<PoliticsType>
                         formRef={formRef}
                         submitter={{
                             searchConfig: {
@@ -263,7 +245,7 @@ const Detail = () => {
                                     width="lg"
                                     rules={[
                                         { required: true, message: '请输入标题' },
-                                        { min: 1, max: 30, message: "标题长度1-30位" },
+                                        { min: 1, max: 40, message: "标题长度1-34位" },
                                     ]}
                                 />
                             </ProForm.Group>
@@ -282,8 +264,8 @@ const Detail = () => {
                                 />
 
                                 <ProFormText
-                                    name="area"
-                                    label="区域"
+                                    name="country"
+                                    label="国家"
                                     width="md"
                                 />
 
@@ -294,32 +276,13 @@ const Detail = () => {
                                 />
 
                                 <ProFormSelect
-                                    name="status"
-                                    label="状态"
+                                    name="newsStatus"
+                                    label="新闻状态"
                                     width="md"
                                     valueEnum={{
-                                        false: '不显示',
-                                        true: '显示'
-                                    }}
-                                />
-
-                                <ProFormSelect
-                                    name="isTop"
-                                    label="置顶"
-                                    width="md"
-                                    valueEnum={{
-                                        false: '否',
-                                        true: '是'
-                                    }}
-                                />
-
-                                <ProFormSelect
-                                    name="isHot"
-                                    label="热门"
-                                    width="md"
-                                    valueEnum={{
-                                        false: '否',
-                                        true: '是'
+                                        1: '普通',
+                                        2: '置顶',
+                                        3: '热门'
                                     }}
                                 />
 

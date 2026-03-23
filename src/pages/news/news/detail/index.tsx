@@ -1,6 +1,6 @@
 import { useParams, history } from '@umijs/max';
 import { useEffect, useState, useRef } from 'react';
-import { getSoutheastAsiaDetail } from '@/services/southeast-asia';
+import { getNewsDetail, update } from '@/services/news';
 import {
     ProDescriptions,
     ProForm,
@@ -14,33 +14,36 @@ import {
 import { Card, Typography, message, Button, Space, Image } from 'antd';
 import './index.less';
 import { request } from '@/utils/request';
-import { update } from '@/services/southeast-asia';
 import { getImgUrl } from '@/utils/tools';
-export interface SoutheastAsiaType {
+export interface NewsType {
     id: string; // Long → string（后端用了 ToStringSerializer）
-    source: string;
-    content: string;
-    imagePath: string;
-    viewCount: string;
-    commentsCount: string;
-    isTop: string;
-    isHot: string;
-    area: string;
-    status: string;
     title: string;
+    content: string;
+    filterContent: string;
+    contentImagePath: string;
+    country: string;
+    source: string;
+    category: string;
+    viewCount: string;
+    likesCount: string;
+    commentsCount: string;
+    newsStatus: string;
+    url: string;
+    photoPath: string;
     createTime: string;
     createName?: string;
 }
 
 const Detail = () => {
     const { id } = useParams<{ id: string }>();
-    const [data, setData] = useState<SoutheastAsiaType>();
+    const [data, setData] = useState<NewsType>();
     const [loading, setLoading] = useState(false);
     const [editMode, setEditMode] = useState(false);
     const formRef = useRef<ProFormInstance | null>(null);
-    const images = data?.imagePath?.split('||').filter(Boolean) || [];
+    const images = data?.contentImagePath?.split('||').filter(Boolean) || [];
     console.log(images)
     const [imageList, setImageList] = useState<string[]>([]);
+    const [photoPath, setPhotoPath] = useState<string>(); // ✅ 新增
 
 
     const detailReq = async () => {
@@ -48,7 +51,7 @@ const Detail = () => {
 
         setLoading(true);
         try {
-            const res = await getSoutheastAsiaDetail({ id });
+            const res = await getNewsDetail({ id });
             setData(res.data);
         } finally {
             setLoading(false);
@@ -62,9 +65,8 @@ const Detail = () => {
 
         formRef.current?.setFieldsValue({
             ...data,
-            status: data.status?.toString(),
-            isTop: data.isTop?.toString(),
-            isHot: data.isHot?.toString()
+            newsStatus: data.newsStatus?.toString(),
+            category: data.category?.toString()
         });
 
     }, [editMode, data]);
@@ -73,11 +75,41 @@ const Detail = () => {
         detailReq();
     }, [id])
 
+
     useEffect(() => {
-        if (data?.imagePath) {
-            setImageList(data.imagePath.split('||').filter(Boolean));
+        if (data?.contentImagePath) {
+            setImageList(data.contentImagePath.split('||').filter(Boolean));
+        }
+
+        if (data?.photoPath) {
+            setPhotoPath(data.photoPath);
         }
     }, [data]);
+
+    const handleUploadCover = async () => {
+
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = 'image/*';
+
+        input.onchange = async () => {
+            const file = input.files?.[0];
+            if (!file) return;
+
+            const formData = new FormData();
+            formData.append("file", file);
+
+            const resp = await request<string>('/api/manage/tools/upload', {
+                method: 'POST',
+                data: formData,
+            });
+
+            setPhotoPath(resp.data);
+            message.success("封面上传成功");
+        };
+
+        input.click();
+    };
 
     const handleUpload = async () => {
 
@@ -106,11 +138,11 @@ const Detail = () => {
     return (
         <>
             <Card
-                title="东南亚新闻详情"
+                title="国内新闻详情"
                 extra={
                     <Space>
                         <Button
-                            onClick={() => history.push('/news/southeast-asia/list')}
+                            onClick={() => history.push('/news/news/list')}
                         >
                             返回
                         </Button>
@@ -137,7 +169,7 @@ const Detail = () => {
                     <>
 
                         <Card >
-                            <ProDescriptions<SoutheastAsiaType>
+                            <ProDescriptions<NewsType>
                                 loading={loading}
                                 dataSource={data}
                                 column={8}
@@ -148,44 +180,74 @@ const Detail = () => {
                         </Card>
 
                         <Card style={{ marginTop: 10 }}>
-                            <ProDescriptions<SoutheastAsiaType>
+                            <ProDescriptions<NewsType>
                                 loading={loading}
                                 dataSource={data}
                                 column={5}
                             >
                                 <ProDescriptions.Item label="来源" dataIndex="source" />
-                                <ProDescriptions.Item label="区域" dataIndex="area" />
                                 <ProDescriptions.Item label="评论数量" dataIndex="commentsCount" />
                                 <ProDescriptions.Item label="浏览次数" dataIndex="viewCount" />
+                                <ProDescriptions.Item label="点赞数量" dataIndex="likesCount" />
                                 <ProDescriptions.Item
-                                    label="状态"
-                                    dataIndex="status"
+                                    label="类型"
+                                    dataIndex="category"
                                     valueEnum={{
-                                        false: { text: '不显示', status: 'Error' },
-                                        true: { text: '显示', status: 'Success' },
+                                        1: { text: '新闻' },
+                                        2: { text: '体育' },
+                                        3: { text: '娱乐' },
+                                        4: { text: '军事' },
+                                        5: { text: '科技' },
+                                        6: { text: '人情' },
+                                        7: { text: '网友' }
                                     }}
                                 />
                                 <ProDescriptions.Item
-                                    label="置顶"
-                                    dataIndex="isTop"
+                                    label="新闻状态"
+                                    dataIndex="newsStatus"
                                     valueEnum={{
-                                        false: { text: '否', status: 'Error' },
-                                        true: { text: '是', status: 'Success' },
-                                    }}
-                                />
-                                <ProDescriptions.Item
-                                    label="热门"
-                                    dataIndex="isHot"
-                                    valueEnum={{
-                                        false: { text: '否', status: 'Error' },
-                                        true: { text: '是', status: 'Success' },
+                                        1: { text: '普通' },
+                                        2: { text: '置顶' },
+                                        3: { text: '热门' }
                                     }}
                                 />
                                 <ProDescriptions.Item label="创建人" dataIndex="createName" />
                                 <ProDescriptions.Item label="创建时间" dataIndex="createTime" />
+                                <ProDescriptions.Item label="修改人" dataIndex="updateName" />
+                                <ProDescriptions.Item label="修改时间" dataIndex="updateTime" />
+
                             </ProDescriptions>
                         </Card>
 
+                        <Card style={{ marginTop: 10 }}>
+                            <ProDescriptions<NewsType>
+                                loading={loading}
+                                dataSource={data}
+                                column={5}
+                            >
+
+                                <ProDescriptions.Item label="源地址" dataIndex="url" />
+
+                            </ProDescriptions>
+
+                        </Card>
+
+                        <Card style={{ marginTop: 10 }}>
+                            <div>
+                                <span style={{ fontWeight: 500 }}>封面图片：</span>
+                            </div>
+
+                            <div style={{ marginTop: 10 }}>
+                                {data?.photoPath ? (
+                                    <Image
+                                        src={getImgUrl(data.photoPath)}
+                                        width={200}
+                                    />
+                                ) : (
+                                    <span>暂无封面</span>
+                                )}
+                            </div>
+                        </Card>
 
 
                         <Card style={{ marginTop: 10 }}>
@@ -208,7 +270,7 @@ const Detail = () => {
                                     <Typography.Paragraph
                                         style={{ whiteSpace: 'pre-wrap', marginBottom: 0, padding: 0 }}
                                     >
-                                        {data?.content || '-'}
+                                        {data?.filterContent || '-'}
                                     </Typography.Paragraph>
                                 </div>
 
@@ -222,7 +284,7 @@ const Detail = () => {
 
 
                 {editMode && (
-                    <ProForm<SoutheastAsiaType>
+                    <ProForm<NewsType>
                         formRef={formRef}
                         submitter={{
                             searchConfig: {
@@ -235,12 +297,12 @@ const Detail = () => {
                                 return;
                             }
 
-                            const imagePath = imageList.join('||');
 
                             const submitData = {
                                 ...values,
                                 id,
-                                imagePath,
+                                contentImagePath: imageList.join('||'), // 顺便帮你修正（你之前写错了）
+                                photoPath, // ✅ 新增
                             };
 
                             console.log(submitData);
@@ -263,7 +325,7 @@ const Detail = () => {
                                     width="lg"
                                     rules={[
                                         { required: true, message: '请输入标题' },
-                                        { min: 1, max: 30, message: "标题长度1-30位" },
+                                        { min: 1, max: 40, message: "标题长度1-40位" },
                                     ]}
                                 />
                             </ProForm.Group>
@@ -281,11 +343,7 @@ const Detail = () => {
                                     width="md"
                                 />
 
-                                <ProFormText
-                                    name="area"
-                                    label="区域"
-                                    width="md"
-                                />
+
 
                                 <ProFormText
                                     name="viewCount"
@@ -294,36 +352,83 @@ const Detail = () => {
                                 />
 
                                 <ProFormSelect
-                                    name="status"
-                                    label="状态"
+                                    name="newsStatus"
+                                    label="新闻状态"
                                     width="md"
                                     valueEnum={{
-                                        false: '不显示',
-                                        true: '显示'
+                                        1: '普通',
+                                        2: '置顶',
+                                        3: '热门'
                                     }}
                                 />
 
                                 <ProFormSelect
-                                    name="isTop"
-                                    label="置顶"
+                                    name="category"
+                                    label="类型"
                                     width="md"
                                     valueEnum={{
-                                        false: '否',
-                                        true: '是'
+                                        1: { text: '新闻' },
+                                        2: { text: '体育' },
+                                        3: { text: '娱乐' },
+                                        4: { text: '军事' },
+                                        5: { text: '科技' },
+                                        6: { text: '人情' },
+                                        7: { text: '网友' }
                                     }}
                                 />
 
-                                <ProFormSelect
-                                    name="isHot"
-                                    label="热门"
+                                <ProFormText
+                                    name="url"
+                                    label="源地址"
                                     width="md"
-                                    valueEnum={{
-                                        false: '否',
-                                        true: '是'
-                                    }}
                                 />
 
                             </ProForm.Group>
+
+                        </Card>
+
+                        <Card style={{ marginTop: 10 }}>
+
+                            <div className="detail-container">
+
+                                {/* 左侧：封面 */}
+                                <div className="detail-left">
+
+                                    <div style={{ fontWeight: 500, marginBottom: 10 }}>
+                                        封面图片
+                                    </div>
+
+                                    <div>
+                                        {(photoPath ?? data?.photoPath) ? (
+                                            <Image
+                                                src={getImgUrl(photoPath ?? data?.photoPath)}
+                                                style={{ width: 200 }}
+                                            />
+                                        ) : (
+                                            <div>暂无封面</div>
+                                        )}
+
+                                        <div style={{ marginTop: 10 }}>
+
+                                            <Button onClick={handleUploadCover}>
+                                                上传封面
+                                            </Button>
+
+                                            {(photoPath ?? data?.photoPath) && (
+                                                <Button
+                                                    danger
+                                                    style={{ marginLeft: 10 }}
+                                                    onClick={() => {
+                                                        setPhotoPath('');
+                                                    }}
+                                                >
+                                                    清除
+                                                </Button>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
                         </Card>
 
@@ -361,7 +466,7 @@ const Detail = () => {
                                 {/* 右侧内容 */}
                                 <div className="detail-right">
                                     <ProFormTextArea
-                                        name="content"
+                                        name="filterContent"
                                         fieldProps={{
                                             autoSize: { minRows: 10 },
                                         }}

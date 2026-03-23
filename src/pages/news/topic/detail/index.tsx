@@ -200,7 +200,7 @@ const Detail = () => {
                             <ProDescriptions<TopicType>
                                 loading={loading}
                                 dataSource={data}
-                                column={16}
+                                column={8}
                             >
                                 <ProDescriptions.Item label="ID" dataIndex="id" />
                                 <ProDescriptions.Item label="标题" dataIndex="title" style={{ fontWeight: "bold" }} />

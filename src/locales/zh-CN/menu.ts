@@ -27,7 +27,7 @@ export default {
   'menu.news.exposure':'曝光',
   'menu.news.company':'公司',
   'menu.news.politics':'政治',
-  'menu.news.china-mainland':'中国大陆',
+  'menu.news.china-mainland':'大陆新闻',
   'menu.news.topic':'话题',
-  'menu.news.society':'社会'
+  'menu.news.society':'社会',
 };

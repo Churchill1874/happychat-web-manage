@@ -1,18 +1,18 @@
 import { ProTable } from '@ant-design/pro-components';
-import { societyPage, deleteById } from '@/services/society';
+import { newsPage, deleteById } from '@/services/news';
 import type { ProColumns } from '@ant-design/pro-components';
 import './index.less'
 import { history } from '@umijs/max';
-import { SocietyType } from '../detail';
+import { NewsType } from '../detail';
 import { Popconfirm, message, Space, App, Button } from 'antd';
 import type { ActionType } from '@ant-design/pro-components';
 import { useRef } from 'react';
 
-const Society: React.FC = () => {
+const Politics: React.FC = () => {
     const { modal } = App.useApp();
     const actionRef = useRef<ActionType | undefined>(undefined);
 
-    const columns: ProColumns<SocietyType>[] = [
+    const columns: ProColumns<NewsType>[] = [
         {
             title: '序号',
             align: 'center',
@@ -22,59 +22,46 @@ const Society: React.FC = () => {
         },
         { title: 'ID', dataIndex: 'id', align: 'center', width: 50 },
         { title: '标题', dataIndex: 'title', align: 'center', width: 250 },
-        { title: '来源', dataIndex: 'source', width: 70, align: 'center', search: false },
+        { title: '来源', dataIndex: 'source', width: 60, align: 'center', search: false },
         {
-            title: '置顶',
+            title: '类型',
             width: 50,
-            dataIndex: 'isTop',
+            dataIndex: 'category',
             align: 'center',
             valueEnum: {
-                false: { text: '否' },
-                true: { text: '是' },
+                1: { text: '新闻' },
+                2: { text: '体育' },
+                3: { text: '娱乐' },
+                4: { text: '军事' },
+                5: { text: '科技' },
+                6: { text: '人情' },
+                7: { text: '网友' }
             },
             search: {
                 transform: (value) => ({
-                    isTop: value
+                    categoryEnum: value
                 })
             },
-            render: (_, record: SocietyType) => (
-                <span style={{ color: record.isTop ? '#610593' : 'gray' }}>
-                    {record.isTop ? '是' : '否'}
-                </span>
-            ),
         },
-
         {
-            title: '热门',
+            title: '状态',
             width: 50,
-            dataIndex: 'isHot',
+            dataIndex: 'newsStatus',
             align: 'center',
             valueEnum: {
-                false: { text: '否' },
-                true: { text: '是' },
+                1: { text: '普通' },
+                2: { text: '置顶' },
+                3: { text: '热门' }
             },
             search: {
                 transform: (value) => ({
-                    isHot: value
+                    newsStatus: value
                 })
             },
-            render: (_, record: SocietyType) => (
-                <span style={{ color: record.isHot ? '#610593' : 'gray' }}>
-                    {record.isHot ? '是' : '否'}
-                </span>
-            ),
         },
-
         { title: '评论数量', dataIndex: 'commentsCount', align: 'center', width: 50, search: false },
+        { title: '点赞数量', dataIndex: 'likesCount', align: 'center', width: 50, search: false },
         { title: '浏览次数', dataIndex: 'viewCount', align: 'center', width: 50, search: false },
-        {
-            title: '状态', dataIndex: 'status', width: 50, align: 'center',
-            valueEnum: {
-                false: { text: '不显示', status: 'error' },
-                true: { text: '显示', status: 'success' }
-            },
-        },
-
         { title: '创建人', dataIndex: 'createName', width: 50, align: 'center', search: false },
         { title: '创建时间', dataIndex: 'createTime', width: 120, align: 'center', search: false },
 
@@ -88,7 +75,7 @@ const Society: React.FC = () => {
                 <Space>
                     <a
                         onClick={() => {
-                            history.push(`/news/society/detail/${record.id}`);
+                            history.push(`/news/news/detail/${record.id}`);
                         }}
                     >
                         详情
@@ -121,12 +108,12 @@ const Society: React.FC = () => {
     ];
 
     return (
-        <ProTable<SocietyType>
+        <ProTable<NewsType>
             actionRef={actionRef}
             rowKey="id"
             columns={columns}
             request={async (params) => {
-                const res = await societyPage(params);
+                const res = await newsPage(params);
                 return {
                     data: res.data.records,
                     total: res.data.total,
@@ -151,7 +138,7 @@ const Society: React.FC = () => {
                             onClick={() => {
                                 // 新增逻辑
                                 console.log('点击新增');
-                                history.push('/news/society/add')
+                                history.push('/news/news/add')
                             }}
                         >
                             新增
@@ -182,4 +169,4 @@ const Society: React.FC = () => {
     );
 };
 
-export default Society;
+export default Politics;

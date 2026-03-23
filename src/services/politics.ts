@@ -1,0 +1,76 @@
+import { request } from '@/utils/request';
+
+export async function politicsPage(params: {
+  current?: number;
+  pageSize?: number;
+  [key: string]: any;
+}) {
+  const { current, pageSize, ...req } = params;
+
+  return request('/api/manage/politics/queryPage', {
+    method: 'POST',
+    data: {
+      pageNum: params.current,
+      pageSize: params.pageSize,
+      ...req,
+    }
+  });
+}
+
+
+export async function getPoliticsDetail(param: { id: string; }) {
+  return request('/api/manage/politics/findById', {
+    method: 'POST',
+    data: {
+      id: param.id
+    }
+  });
+}
+
+
+export async function addPolitics(
+  params: {
+    [key: string]: any;
+  }
+) {
+  const { ...req } = params;
+  return request(
+    '/api/manage/politics/add',
+    {
+      method: 'POST',
+      data: {
+        ...req
+      }
+    });
+}
+
+export async function deleteById(
+  params: {
+    [key: string]: any;
+  }
+) {
+  const { ...req } = params;
+  return request(
+    '/api/manage/politics/delete',
+    {
+      method: 'POST',
+      data: {
+        ...req
+      }
+    });
+
+}
+
+
+export async function update(param: { [key: string]: any; }) {
+  const {...req} = param;
+  return request (
+    '/api/manage/politics/update',
+    {
+      method: 'POST',
+      data:{
+        ...req
+      }
+    }
+  )
+}

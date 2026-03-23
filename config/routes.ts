@@ -153,7 +153,7 @@ export default [
         hideInMenu: false,
       },
 
-      
+
       //社会
       {
         name: 'society',
@@ -168,6 +168,39 @@ export default [
       {
         path: '/news/society/detail/:id',//详情页
         component: './news/society/detail',
+        hideInMenu: false,
+      },
+
+      //政治
+      {
+        name: 'politics',
+        icon: 'team',
+        path: '/news/politics/list',
+        component: './news/politics/list'
+      },
+      {
+        path: '/news/politics/add',// ✅ 新增页
+        component: './news/politics/add'
+      },
+      {
+        path: '/news/politics/detail/:id',//详情页
+        component: './news/politics/detail',
+        hideInMenu: false,
+      },
+      //国内新闻
+      {
+        name: 'china-mainland',
+        icon: 'team',
+        path: '/news/news/list',
+        component: './news/news/list'
+      },
+      {
+        path: '/news/news/add',// ✅ 新增页
+        component: './news/news/add'
+      },
+      {
+        path: '/news/news/detail/:id',//详情页
+        component: './news/news/detail',
         hideInMenu: false,
       },
 
