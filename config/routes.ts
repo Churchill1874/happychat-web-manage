@@ -70,7 +70,7 @@ export default [
   },
   {
     path: '/member',
-    icon: 'team',
+    icon: 'userOutlined',
     name: 'member',
     routes: [
       {
@@ -79,7 +79,7 @@ export default [
       },
       {
         name: 'info',
-        icon: 'team',
+        icon: 'userOutlined',
         path: '/member/list',
         component: './member/list'
       },
@@ -96,7 +96,7 @@ export default [
   },
   {
     path: '/news',
-    icon: 'team',
+    icon: 'notificationOutlined',
     name: 'news',
     routes: [
       {
@@ -105,7 +105,7 @@ export default [
       },
       {
         name: 'southeast-asia',
-        icon: 'team',
+        icon: 'notificationOutlined',
         path: '/news/southeast-asia/list',
         component: './news/southeast-asia/list'
       },
@@ -122,7 +122,7 @@ export default [
       //话题
       {
         name: 'topic',
-        icon: 'team',
+        icon: 'notificationOutlined',
         path: '/news/topic/list',
         component: './news/topic/list'
       },
@@ -139,7 +139,7 @@ export default [
       //曝光
       {
         name: 'exposure',
-        icon: 'team',
+        icon: 'notificationOutlined',
         path: '/news/exposure/list',
         component: './news/exposure/list'
       },
@@ -157,7 +157,7 @@ export default [
       //社会
       {
         name: 'society',
-        icon: 'team',
+        icon: 'notificationOutlined',
         path: '/news/society/list',
         component: './news/society/list'
       },
@@ -174,7 +174,7 @@ export default [
       //政治
       {
         name: 'politics',
-        icon: 'team',
+        icon: 'notificationOutlined',
         path: '/news/politics/list',
         component: './news/politics/list'
       },
@@ -190,7 +190,7 @@ export default [
       //国内新闻
       {
         name: 'china-mainland',
-        icon: 'team',
+        icon: 'notificationOutlined',
         path: '/news/news/list',
         component: './news/news/list'
       },
@@ -206,7 +206,7 @@ export default [
       //公司新闻
       {
         name: 'company',
-        icon: 'team',
+        icon: 'notificationOutlined',
         path: '/news/company/list',
         component: './news/company/list'
       },
@@ -220,6 +220,97 @@ export default [
         hideInMenu: true,
       },
 
+    ]
+  },
+
+  {
+    path: '/comment',
+    icon: 'messageOutlined',
+    name: 'comment',
+    routes: [
+      {
+        path: '/comment',
+        redirect: '/comment/list',
+      },
+      {
+        name: 'info',
+        icon: 'messageOutlined',
+        path: '/comment/list',
+        component: './comment/list'
+      },
+    ]
+  },
+
+  {
+    path: '/blacklist',
+    icon: 'blockOutlined',
+    name: 'blacklist',
+    routes: [
+      {
+        path: '/blacklist',
+        redirect: '/blacklist/list',
+      },
+      {
+        name: 'record',
+        icon: 'blockOutlined',
+        path: '/blacklist/list',
+        component: './blacklist/list',
+      },
+      {
+        path: '/blacklist/add',
+        component: './blacklist/add'
+      },
+    ]
+  },
+  {
+    path: '/views',
+    icon: 'eyeOutlined',
+    name: 'views',
+    routes: [
+      {
+        path: '/views',
+        redirect: '/views/list',
+      },
+      {
+        name: 'info',
+        icon: 'eyeOutlined',
+        path: '/views/list',
+        component: './viewsrecord/list',
+      },
+    ]
+  },
+  {
+    path: '/likes',
+    icon: 'likeOutlined',
+    name: 'likes',
+    routes: [
+      {
+        path: '/likes',
+        redirect: '/likes/list',
+      },
+      {
+        name: 'info',
+        icon: 'likeOutlined',
+        path: '/likes/list',
+        component: './likesrecord/list',
+      },
+    ]
+  },
+  {
+    path: '/privatechat',
+    icon: 'commentOutlined',
+    name: 'privatechat',
+    routes: [
+      {
+        path: '/privatechat',
+        redirect: '/privatechat/list',
+      },
+      {
+        name: 'info',
+        icon: 'commentOutlined',
+        path: '/privatechat/list',
+        component: './privatechat/list',
+      },
     ]
   },
   {

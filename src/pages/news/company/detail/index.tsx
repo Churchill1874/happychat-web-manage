@@ -1,22 +1,36 @@
 import { useParams, history } from '@umijs/max';
 import { useEffect, useState, useRef } from 'react';
-import { getCompanyDetail, update } from '@/services/company';
+import { getCompanyDetail, update, addEvent, updateEvent, deleteEvent } from '@/services/company';
+
 import {
     ProDescriptions,
     ProForm,
     ProFormText,
-    ProFormSelect,
-    ProFormSwitch,
     ProFormTextArea,
     ProFormDatePicker,
     ProFormInstance
 } from '@ant-design/pro-components';
-import { Card, Typography, message, Button, Space, Image } from 'antd';
+
+import { Card, Typography, message, Button, Space, Timeline, Image } from 'antd';
 import './index.less';
 import { request } from '@/utils/request';
 import { getImgUrl } from '@/utils/tools';
+
+import dayjs from 'dayjs';
+import 'dayjs/locale/zh-cn';
+dayjs.locale('zh-cn');
+
+export interface EventType {
+    id: string;
+    companyId: string;
+    image: string;
+    description: string;
+    createTime: string;
+    eventDate: string;
+}
+
 export interface CompanyType {
-    id: string; // Long → string（后端用了 ToStringSerializer）
+    id: string;
     name: string;
     city: string;
     image: string;
@@ -33,22 +47,29 @@ export interface CompanyType {
     createName?: string;
     updateTime: string;
     updateName: string;
+    companyEventList: EventType[];
 }
 
 const Detail = () => {
     const { id } = useParams<{ id: string }>();
+
     const [data, setData] = useState<CompanyType>();
     const [loading, setLoading] = useState(false);
     const [editMode, setEditMode] = useState(false);
-    const formRef = useRef<ProFormInstance | null>(null);
-    const images = data?.image?.split('||').filter(Boolean) || [];
-    console.log(images)
-    const [imageList, setImageList] = useState<string[]>([]);
+    const [eventMode, setEventMode] = useState(false);
 
+    const [imageList, setImageList] = useState<string[]>([]);
+    const [newEvent, setNewEvent] = useState<any | null>(null);
+
+    /** ⭐ 新增：事件编辑缓存 */
+    const [eventEditMap, setEventEditMap] = useState<Record<string, any>>({});
+
+    const formRef = useRef<ProFormInstance | null>(null);
+
+    const images = data?.image?.split('||').filter(Boolean) || [];
 
     const detailReq = async () => {
         if (!id) return;
-
         setLoading(true);
         try {
             const res = await getCompanyDetail({ id });
@@ -56,23 +77,11 @@ const Detail = () => {
         } finally {
             setLoading(false);
         }
-    }
-
-
-
-    useEffect(() => {
-        if (!editMode || !data) return;
-
-        formRef.current?.setFieldsValue({
-            ...data,
-        });
-
-    }, [editMode, data]);
+    };
 
     useEffect(() => {
         detailReq();
-    }, [id])
-
+    }, [id]);
 
     useEffect(() => {
         if (data?.image) {
@@ -80,9 +89,12 @@ const Detail = () => {
         }
     }, [data]);
 
+    useEffect(() => {
+        if (!editMode || !data) return;
+        formRef.current?.setFieldsValue({ ...data });
+    }, [editMode, data]);
 
     const handleUpload = async () => {
-
         const input = document.createElement('input');
         input.type = 'file';
         input.accept = 'image/*';
@@ -111,258 +123,238 @@ const Detail = () => {
                 title="公司详情"
                 extra={
                     <Space>
-                        <Button
-                            onClick={() => history.push('/news/company/list')}
-                        >
+                        <Button onClick={() => history.push('/news/company/list')}>
                             返回
                         </Button>
 
                         {editMode ? (
-                            <Button onClick={() => setEditMode(false)}>
-                                取消
-                            </Button>
+                            <Button onClick={() => setEditMode(false)}>取消</Button>
                         ) : (
-                            <Button
-                                type="primary"
-                                onClick={() => setEditMode(true)}
-                            >
+                            <Button type="primary" onClick={() => setEditMode(true)}>
                                 修改
                             </Button>
                         )}
                     </Space>
                 }
-
             >
 
-
-                {!editMode && (
+                {/* ================= 展示 ================= */}
+                {!editMode && !eventMode && (
                     <>
-
-                        <Card >
-                            <ProDescriptions<CompanyType>
-                                loading={loading}
-                                dataSource={data}
-                                column={8}
-                            >
+                        <Card>
+                            <ProDescriptions dataSource={data} column={8}>
                                 <ProDescriptions.Item label="ID" dataIndex="id" />
-                                <ProDescriptions.Item label="名字" dataIndex="name" style={{ fontWeight: "bold" }} />
+                                <ProDescriptions.Item label="名字" dataIndex="name" />
                             </ProDescriptions>
                         </Card>
 
                         <Card style={{ marginTop: 10 }}>
-                            <ProDescriptions<CompanyType>
-                                loading={loading}
-                                dataSource={data}
-                                column={5}
-                            >
-                                <ProDescriptions.Item label="所在城市" dataIndex="city" />
+                            <ProDescriptions dataSource={data} column={5}>
+                                <ProDescriptions.Item label="城市" dataIndex="city" />
                                 <ProDescriptions.Item label="团队规模" dataIndex="teamScale" />
-                                <ProDescriptions.Item label="休假制度" dataIndex="holiday" />
                                 <ProDescriptions.Item label="薪资范围" dataIndex="salaryRange" />
-                                <ProDescriptions.Item label="领导特点" dataIndex="leadershipCharacter" />
-                                <ProDescriptions.Item label="居住制度" dataIndex="live" />
-                                <ProDescriptions.Item label="办公环境" dataIndex="officeEnvironment" />
-                                <ProDescriptions.Item label="加班补偿" dataIndex="overtimeCompensation" />
-                                <ProDescriptions.Item label="奖金制度" dataIndex="bonus" />
-                                <ProDescriptions.Item label="创建人" dataIndex="createName" />
-                                <ProDescriptions.Item label="创建时间" dataIndex="createTime" />
-                                <ProDescriptions.Item label="修改人" dataIndex="updateName" />
-                                <ProDescriptions.Item label="修改时间" dataIndex="updateTime" />
                             </ProDescriptions>
                         </Card>
 
                         <Card style={{ marginTop: 10 }}>
                             <div className="detail-container">
-
                                 <div className="detail-left">
-                                    {images.length > 0 ? (
-                                        images.map((img, index) => (
-                                            <div key={index} className="detail-img">
-                                                <Image
-                                                    src={getImgUrl(img)}
-                                                    alt='' />
-                                            </div>))
-                                    ) : (
-                                        '无图片'
-                                    )}
+                                    {images.map((img, i) => (
+                                        <Image key={i} src={getImgUrl(img)} />
+                                    ))}
                                 </div>
 
                                 <div className="detail-right">
-                                    <Typography.Paragraph
-                                        style={{ whiteSpace: 'pre-wrap', marginBottom: 0, padding: 0 }}
-                                    >
-                                        {data?.description || '-'}
+                                    <Typography.Paragraph style={{ whiteSpace: 'pre-wrap' }}>
+                                        {data?.description}
                                     </Typography.Paragraph>
                                 </div>
-
                             </div>
                         </Card>
-                    </>
 
+                        {/* ✅ 事件入口 */}
+                        <Card
+                            style={{ marginTop: 10 }}
+                            title="事件信息"
+                            extra={
+                                <Button
+                                    type="primary"
+                                    onClick={() => setEventMode(true) }>
+                                    事件
+                                </Button>
+                            }
+                        >
+                            <Timeline>
+                                {data?.companyEventList?.map((item) => (
+                                    <Timeline.Item key={item.id}>
+                                        <div>{item.eventDate}</div>
+                                        <div>{item.description}</div>
+                                    </Timeline.Item>
+                                ))}
+                            </Timeline>
+                        </Card>
+                    </>
                 )}
 
-
+                {/* ================= 编辑 ================= */}
                 {editMode && (
-                    <ProForm<CompanyType>
+                    <ProForm
                         formRef={formRef}
-                        submitter={{
-                            searchConfig: {
-                                submitText: '保存',
-                            },
-                        }}
                         onFinish={async (values) => {
-                            if (!id) {
-                                message.error('参数错误,缺少g公司ID');
-                                return;
-                            }
-
-
-                            const submitData = {
+                            await update({
                                 ...values,
                                 id,
                                 image: imageList.join('||'),
-                            };
+                            });
 
-                            await update(submitData);
                             message.success('保存成功');
-                            await detailReq();
-
                             setEditMode(false);
+                            detailReq();
                         }}
                     >
-                        {/* 标题 */}
-                        <Card >
-                            <ProForm.Group colProps={{ span: 24 }}>
-                                <ProFormText
-                                    name="name"
-                                    label="名字"
-                                    width="lg"
-                                    rules={[
-                                        { required: true, message: '请输入名字' },
-                                        { min: 1, max: 40, message: "标题长度1-40位" },
-                                    ]}
-                                />
-                            </ProForm.Group>
-                        </Card>
+                        <ProFormText name="name" label="名字" />
 
-
-                        {/* 基本信息 */}
-                        <Card style={{ marginTop: 10 }}>
-
-                            <ProForm.Group colProps={{ span: 4 }}>
-
-                                <ProFormText
-                                    name="city"
-                                    label="城市"
-                                    width="md"
-                                />
-
-                                <ProFormText
-                                    name="teamScale"
-                                    label="团队规模"
-                                    width="md"
-                                />
-
-                                <ProFormText
-                                    name="holiday"
-                                    label="休假制度"
-                                    width="md"
-                                />
-
-                                <ProFormText
-                                    name="salarRange"
-                                    label="薪资范围"
-                                    width="md"
-                                />
-
-                                <ProFormText
-                                    name="leadershipCharacter"
-                                    label="领导性格"
-                                    width="md"
-                                />
-
-                                <ProFormText
-                                    name="live"
-                                    label="居住"
-                                    width="md"
-                                />
-
-
-                                <ProFormText
-                                    name="officeEnvironment"
-                                    label="办公环境"
-                                    width="md"
-                                />
-
-
-                                <ProFormText
-                                    name="overtimeCompensation"
-                                    label="加班补偿"
-                                    width="md"
-                                />
-
-
-                                <ProFormText
-                                    name="bonus"
-                                    label="奖金制度"
-                                    width="md"
-                                />
-
-
-                            </ProForm.Group>
-
-                        </Card>
-
-
-                        {/* 图片 + 内容 */}
                         <Card style={{ marginTop: 10 }}>
                             <div className="detail-container">
-
-                                {/* 左侧图片上传 */}
                                 <div className="detail-left">
-
-                                    {imageList.map((img, index) => (
-                                        <div key={index} className="detail-img">
-
-                                            <Image src={getImgUrl(img)} style={{ padding: 10 }} />
-
-                                            <div
-                                                className="img-delete"
-                                                onClick={() => {
-                                                    setImageList(prev => prev.filter((_, i) => i !== index));
-                                                }}
-                                            >
-                                                ×
-                                            </div>
-
-                                        </div>
+                                    {imageList.map((img, i) => (
+                                        <Image key={i} src={getImgUrl(img)} />
                                     ))}
-
-                                    {/* 上传按钮 */}
-                                    <div className="upload-btn" onClick={handleUpload}>
-                                        +
-                                    </div>
-
+                                    <div className="upload-btn" onClick={handleUpload}>+</div>
                                 </div>
 
-                                {/* 右侧内容 */}
                                 <div className="detail-right">
-                                    <ProFormTextArea
-                                        name="description"
-                                        fieldProps={{
-                                            autoSize: { minRows: 10 },
-                                        }}
-                                    />
+                                    <ProFormTextArea name="description" />
                                 </div>
-
                             </div>
                         </Card>
                     </ProForm>
                 )}
+
+                {/* ================= ⭐ 事件管理 ================= */}
+                {eventMode && (
+                    <Card
+                        title="事件管理"
+                        style={{ marginTop: 10 }}
+                        extra={
+                            <Button
+                                type="primary"
+                                onClick={() => setEventMode(false)}>
+                                返回
+                            </Button>
+                        }
+                    >
+                        <Button
+                            type="primary"
+                            style={{ marginBottom: 16 }}
+                            onClick={() => setNewEvent({ eventDate: '', description: '' })}
+                        >
+                            新增事件
+                        </Button>
+
+                        {/* 新增 */}
+                        {newEvent && (
+                            <Card size="small" style={{ marginBottom: 12 }}>
+                                <ProFormDatePicker
+                                    fieldProps={{
+                                        onChange: (d: any) => {
+                                            setNewEvent({ ...newEvent, eventDate: d?.format('YYYY-MM-DD') });
+                                        }
+                                    }}
+                                />
+                                <ProFormTextArea
+                                    fieldProps={{
+                                        onChange: (e) => {
+                                            setNewEvent({ ...newEvent, description: e.target.value });
+                                        }
+                                    }}
+                                />
+                                <Space>
+                                    <Button
+                                        type="primary"
+                                        onClick={async () => {
+                                            await addEvent({ ...newEvent, companyId: id });
+                                            message.success('新增成功');
+                                            setNewEvent(null);
+                                            detailReq();
+                                        }}
+                                    >
+                                        保存
+                                    </Button>
+
+                                    <Button onClick={() => setNewEvent(null)}>
+                                        取消
+                                    </Button>
+                                </Space>
+                            </Card>
+                        )}
+
+                        {/* 列表 */}
+                        {data?.companyEventList?.map((item) => (
+                            <Card key={item.id} size="small" style={{ marginBottom: 12 }}>
+                                <ProFormDatePicker
+                                    fieldProps={{
+                                        value: dayjs(eventEditMap[item.id]?.eventDate || item.eventDate),
+                                        onChange: (d: any) => {
+                                            setEventEditMap(prev => ({
+                                                ...prev,
+                                                [item.id]: {
+                                                    ...prev[item.id],
+                                                    eventDate: d?.format('YYYY-MM-DD')
+                                                }
+                                            }));
+                                        }
+                                    }}
+                                />
+
+                                <ProFormTextArea
+                                    fieldProps={{
+                                        value: eventEditMap[item.id]?.description || item.description,
+                                        onChange: (e) => {
+                                            setEventEditMap(prev => ({
+                                                ...prev,
+                                                [item.id]: {
+                                                    ...prev[item.id],
+                                                    description: e.target.value
+                                                }
+                                            }));
+                                        }
+                                    }}
+                                />
+
+                                <Space>
+                                    <Button
+                                        type="primary"
+                                        onClick={async () => {
+                                            await updateEvent({
+                                                ...item,
+                                                ...eventEditMap[item.id]
+                                            });
+                                            message.success('修改成功');
+                                            detailReq();
+                                        }}
+                                    >
+                                        保存
+                                    </Button>
+
+                                    <Button
+                                        danger
+                                        onClick={async () => {
+                                            if (!confirm('确定删除？')) return;
+                                            await deleteEvent({ id: item.id });
+                                            message.success('删除成功');
+                                            detailReq();
+                                        }}
+                                    >
+                                        删除
+                                    </Button>
+                                </Space>
+                            </Card>
+                        ))}
+                    </Card>
+                )}
             </Card>
-
         </>
-
     );
 };
 

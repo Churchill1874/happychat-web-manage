@@ -35,7 +35,7 @@ export async function addCompany(
 ) {
   const { ...req } = params;
   return request(
-    '/api/manage/company/add',
+    '/api/manage/company/addCompany',
     {
       method: 'POST',
       data: {
@@ -51,7 +51,7 @@ export async function deleteById(
 ) {
   const { ...req } = params;
   return request(
-    '/api/manage/company/delete',
+    '/api/manage/company/deleteCompany',
     {
       method: 'POST',
       data: {
@@ -65,7 +65,60 @@ export async function deleteById(
 export async function update(param: { [key: string]: any; }) {
   const {...req} = param;
   return request (
-    '/api/manage/company/update',
+    '/api/manage/company/updateCompany',
+    {
+      method: 'POST',
+      data:{
+        ...req
+      }
+    }
+  )
+}
+
+
+//事件
+
+
+
+
+export async function addEvent(
+  params: {
+    [key: string]: any;
+  }
+) {
+  const { ...req } = params;
+  return request(
+    '/api/manage/company/addEvent',
+    {
+      method: 'POST',
+      data: {
+        ...req
+      }
+    });
+}
+
+export async function deleteEvent(
+  params: {
+    [key: string]: any;
+  }
+) {
+  const { ...req } = params;
+  return request(
+    '/api/manage/company/deleteEvent',
+    {
+      method: 'POST',
+      data: {
+        ...req
+      }
+    });
+
+}
+
+
+export async function updateEvent(param: { [key: string]: any; }) {
+  const {...req} = param;
+  return request (
+    '/api/manage/company/updateEvent',
     {
       method: 'POST',
       data:{

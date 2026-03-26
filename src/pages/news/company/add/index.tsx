@@ -46,7 +46,7 @@ const CompanyAdd = () => {
 
         const submitData = {
             ...values,
-            isTop: Number(values.isTop),
+            image: imageList.join("||")
         };
 
         const res = await addCompany(submitData);
