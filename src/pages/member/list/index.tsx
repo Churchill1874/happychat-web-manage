@@ -21,18 +21,19 @@ const MemberManagement: React.FC = () => {
             width: 40,
             search: false
         },
+        { title: 'ID', dataIndex: 'id', width: 80, align: 'center' },
         { title: '昵称', dataIndex: 'name', width: 160 },
-        { title: '账号', dataIndex: 'account', width: 160 },
+        { title: '账号', dataIndex: 'account', width: 130 },
         {
             title: '性别', dataIndex: 'gender', align: 'center',
-            valueEnum: { 1: { text: '男' }, 0: { text: '女' } }, width: 70, search: false
+            valueEnum: { 1: { text: '男' }, 0: { text: '女' } }, width: 40, search: false
         },
-        { title: '生日', dataIndex: 'birth', width: 50, render: (_, record: Member) => calcAge(record.birth), search: false },
-        { title: '等级', dataIndex: 'level', width: 50, align: 'center', search: false },
-        { title: '地区', dataIndex: 'city', width: 80, search: false },
+        { title: '年龄', dataIndex: 'birth', width: 50, align: 'center', render: (_, record: Member) => calcAge(record.birth), search: false },
+        //{ title: '等级', dataIndex: 'level', width: 50, align: 'center', search: false },
+        { title: '地区', dataIndex: 'city', width: 90, search: false , align: 'center'},
         {
             title: '机器人',
-            width: 70,
+            width: 50,
             dataIndex: 'isBot',
             align: 'center',
             valueEnum: {
@@ -52,7 +53,7 @@ const MemberManagement: React.FC = () => {
         },
 
         {
-            title: '状态', dataIndex: 'status', width: 70, align: 'center',
+            title: '状态', dataIndex: 'status', width: 50, align: 'center',
             valueEnum: {
                 0: { text: '禁用', status: 'error' },
                 1: { text: '正常', status: 'success' }
@@ -61,14 +62,14 @@ const MemberManagement: React.FC = () => {
 
         { title: '余额', dataIndex: 'balance', align: 'center', width: 80, search: false },
         {
-            title: '头像', align: 'center', width: 80, search: false, render: (_, record) => (
+            title: '头像', align: 'center', width: 40, search: false, render: (_, record) => (
                 <img
                     src={`/avatars/${record.avatarPath}.jpg`}
                     style={{ width: 30, height: 30, borderRadius: '20%' }}
                 />
             )
         },
-        { title: '注册时间', dataIndex: 'createTime', width: 120, search: false },
+        { title: '注册时间', dataIndex: 'createTime', width: 100, search: false, align: 'center' },
         /*         {
                     title: '阵营',
                     dataIndex: 'campType',
@@ -96,7 +97,7 @@ const MemberManagement: React.FC = () => {
         {
             title: '操作',
             align: 'center',
-            valueType: 'option',
+            //valueType: 'option',
             width: 70,
             fixed: 'right',
             render: (_, record) => [
@@ -112,7 +113,7 @@ const MemberManagement: React.FC = () => {
                     详情
                 </a>,
                 <a
-                    style={{ marginLeft: '30px', color: '#ff4d4f' }}
+                    style={{ marginLeft: '20px', color: '#ff4d4f' }}
                     onClick={() => {
                         console.log("delete click");
 
@@ -155,7 +156,7 @@ const MemberManagement: React.FC = () => {
             }}
             search={{
                 span: 6,
-                labelWidth: 50,
+                labelWidth: 'auto',
                 defaultCollapsed: false,
                 className: 'compact-search', // 👈 加 class
                 optionRender: (searchConfig, formProps, dom) => {

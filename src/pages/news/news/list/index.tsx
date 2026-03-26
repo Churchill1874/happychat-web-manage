@@ -8,7 +8,7 @@ import { Popconfirm, message, Space, App, Button } from 'antd';
 import type { ActionType } from '@ant-design/pro-components';
 import { useRef } from 'react';
 
-const Politics: React.FC = () => {
+const News: React.FC = () => {
     const { modal } = App.useApp();
     const actionRef = useRef<ActionType | undefined>(undefined);
 
@@ -169,4 +169,4 @@ const Politics: React.FC = () => {
     );
 };
 
-export default Politics;
+export default News;

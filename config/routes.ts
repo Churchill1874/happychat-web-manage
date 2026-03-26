@@ -60,12 +60,6 @@ export default [
         path: '/dashboard/analysis',
         component: './dashboard/analysis',
       },
-      {
-        name: 'workplace',
-        icon: 'smile',
-        path: '/dashboard/workplace',
-        component: './dashboard/workplace',
-      },
     ],
   },
   {
@@ -310,6 +304,31 @@ export default [
         icon: 'commentOutlined',
         path: '/privatechat/list',
         component: './privatechat/list',
+      },
+    ]
+  },
+  {
+    path: '/system-message',
+    icon: 'notificationOutlined',
+    name: 'system-message',
+    routes: [
+      {
+        path: '/system-message',
+        redirect: '/system-message/list',
+      },
+      {
+        name: 'info',
+        icon: 'notificationOutlined',
+        path: '/system-message/list',
+        component: './system-message/list',
+      },
+      {
+        path: '/system-message/add',
+        component: './system-message/add',
+      },
+      {
+        path: '/system-message/delete',
+        component: './system-message/delete',
       },
     ]
   },
