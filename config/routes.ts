@@ -90,7 +90,7 @@ export default [
   },
   {
     path: '/news',
-    icon: 'notificationOutlined',
+    icon: 'globalOutlined',
     name: 'news',
     routes: [
       {
@@ -99,7 +99,7 @@ export default [
       },
       {
         name: 'southeast-asia',
-        icon: 'notificationOutlined',
+        icon: 'globalOutlined',
         path: '/news/southeast-asia/list',
         component: './news/southeast-asia/list'
       },
@@ -236,27 +236,6 @@ export default [
   },
 
   {
-    path: '/blacklist',
-    icon: 'blockOutlined',
-    name: 'blacklist',
-    routes: [
-      {
-        path: '/blacklist',
-        redirect: '/blacklist/list',
-      },
-      {
-        name: 'record',
-        icon: 'blockOutlined',
-        path: '/blacklist/list',
-        component: './blacklist/list',
-      },
-      {
-        path: '/blacklist/add',
-        component: './blacklist/add'
-      },
-    ]
-  },
-  {
     path: '/views',
     icon: 'eyeOutlined',
     name: 'views',
@@ -329,6 +308,28 @@ export default [
       {
         path: '/system-message/delete',
         component: './system-message/delete',
+      },
+    ]
+  },
+
+  {
+    path: '/blacklist',
+    icon: 'blockOutlined',
+    name: 'blacklist',
+    routes: [
+      {
+        path: '/blacklist',
+        redirect: '/blacklist/list',
+      },
+      {
+        name: 'record',
+        icon: 'blockOutlined',
+        path: '/blacklist/list',
+        component: './blacklist/list',
+      },
+      {
+        path: '/blacklist/add',
+        component: './blacklist/add'
       },
     ]
   },

@@ -1,0 +1,711 @@
+// ============================================================
+//  Dashboard Overview — dashboard.less
+//  依赖: Noto Sans SC / DM Mono (Google Fonts)
+// ============================================================
+
+
+// ── 1. 变量 ─────────────────────────────────────────────────
+
+.ant-pro-layout-content {
+  padding-block-start: 0px !important; // 改小顶部，默认一般是 24px
+}
+
+// 背景
+@bg: #f0f4fa;
+@bg2: #e6ecf7;
+
+// 表面 / 卡片
+@surface: #ffffff;
+@surface2: #f5f8ff;
+
+// 边框
+@border: #dde5f5;
+@border2: #c8d6ef;
+
+// 文字
+@text: #1a2540;
+@text2: #3d5080;
+@muted: #7a90b8;
+
+// 主色
+@accent: #2563eb;
+@accent-light: #eff4ff;
+@accent2: #6366f1;
+
+// 语义色
+@green: #10b981;
+@green-light: #ecfdf5;
+@red: #ef4444;
+@red-light: #fff1f1;
+@yellow: #f59e0b;
+@yellow-light: #fffbeb;
+@orange: #f97316;
+@cyan: #0891b2;
+@cyan-light: #ecfeff;
+@purple: #7c3aed;
+@pink: #db2777;
+
+// 字体
+@font: 'Noto Sans SC', sans-serif;
+@mono: 'DM Mono', monospace;
+
+// 圆角
+@r: 12px;
+@rs: 8px;
+
+// 阴影
+@sh: 0 1px 3px rgba(30, 60, 120, 0.05), 0 4px 14px rgba(30, 60, 120, 0.07);
+@sh-md: 0 2px 8px rgba(30, 60, 120, 0.08), 0 8px 24px rgba(30, 60, 120, 0.09);
+
+
+// ── 2. 基础 Reset ───────────────────────────────────────────
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: @bg;
+  color: @text;
+  font-family: @font;
+  font-size: 14px;
+  line-height: 1.6;
+  padding: 28px 32px 52px;
+}
+
+
+// ── 3. 页头 ─────────────────────────────────────────────────
+
+.ph {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 28px;
+
+  &-title {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  &-sub {
+    font-size: 12px;
+    color: @muted;
+    font-family: @mono;
+    margin-top: 3px;
+  }
+
+  &-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+}
+
+// 实时状态胶囊
+.live-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  color: @green;
+  background: @green-light;
+  border: 1px solid #a7f3d0;
+  padding: 5px 12px;
+  border-radius: 20px;
+
+  &::before {
+    content: '';
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: @green;
+    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.25);
+  }
+}
+
+// 日期胶囊
+.date-pill {
+  font-family: @mono;
+  font-size: 12px;
+  color: @text2;
+  background: @surface;
+  border: 1px solid @border;
+  padding: 5px 14px;
+  border-radius: 20px;
+}
+
+
+// ── 4. 区块标题 ─────────────────────────────────────────────
+
+.st {
+  font-size: 14px;
+  font-weight: 600;
+  color: @muted;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  &::before {
+    content: '';
+    width: 3px;
+    height: 13px;
+    border-radius: 2px;
+    background: @accent;
+    display: inline-block;
+  }
+}
+
+
+// ── 5. 栅格布局 ─────────────────────────────────────────────
+
+.g4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.g5 {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.g3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+
+// ── 6. 通用卡片 ─────────────────────────────────────────────
+
+.card {
+  background: @surface;
+  border: 1px solid @border;
+  border-radius: @r;
+  box-shadow: @sh;
+  position: relative;
+  overflow: hidden;
+  transition: box-shadow 0.18s, transform 0.18s;
+
+  &:hover {
+    box-shadow: @sh-md;
+    transform: translateY(-1px);
+  }
+
+  // 卡片顶部色条
+  &-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    border-radius: @r @r 0 0;
+  }
+}
+
+
+// ── 7. 注册统计大卡片 ───────────────────────────────────────
+
+.reg-card {
+  background: @surface;
+  border: 1px solid @border;
+  border-radius: @r;
+  box-shadow: @sh;
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+
+.reg-head {
+  background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%);
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  &-t {
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &-s {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.6);
+    font-family: @mono;
+  }
+}
+
+.reg-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.reg-item {
+  padding: 10px 24px;
+  border-right: 1px solid @border;
+
+  &:last-child {
+    border-right: none;
+  }
+}
+
+.ri {
+
+  // 标签行
+  &-lbl {
+    font-size: 15px;
+    color: @muted;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  // 图标小方块
+  &-ico {
+    width: 18px;
+    height: 18px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+  }
+
+  // 数值
+  &-val {
+    font-size: 18px;
+    font-weight: 700;
+    font-family: @mono;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  // 对比行
+  &-diff {
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+}
+
+
+// ── 8. Pill 标签（涨跌 / 中性）──────────────────────────────
+
+// 涨跌 pill 样式 —— 补充到 index.less 中
+.pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 7px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  margin-right: 4px;
+
+  // 上涨：绿色
+  &.p-up {
+    color: #10b981;
+    background: rgba(16, 185, 129, 0.12);
+  }
+
+  // 下跌：红色
+  &.p-dn {
+    color: #ef4444;
+    background: rgba(239, 68, 68, 0.12);
+  }
+
+  // 持平 / 无数据：灰色
+  &.p-neu {
+    color: var(--muted);
+    background: var(--surface2);
+  }
+}
+
+// ── 9. 评论统计卡片 ─────────────────────────────────────────
+
+.cs {
+  &-pad {
+    padding: 12px 20px;
+  }
+
+  &-lbl {
+    font-size: 15px;
+    color: @muted;
+    font-weight: 500;
+    margin-bottom: 8px;
+  }
+
+  &-val {
+    font-size: 18px;
+    font-weight: 700;
+    font-family: @mono;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  &-diff {
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: @muted;
+  }
+}
+
+// 迷你进度条
+.mini-wrap {
+  height: 4px;
+  background: @bg2;
+  border-radius: 2px;
+  margin-top: 10px;
+  overflow: hidden;
+}
+
+.mini-fill {
+  height: 100%;
+  border-radius: 2px;
+}
+
+
+// ── 10. 新闻浏览卡片 ────────────────────────────────────────
+
+.nc {
+  background: @surface;
+  border: 1px solid @border;
+  border-radius: @r;
+  box-shadow: @sh;
+  overflow: hidden;
+  transition: box-shadow 0.18s, transform 0.18s;
+
+  &:hover {
+    box-shadow: @sh-md;
+    transform: translateY(-1px);
+  }
+
+  &-head {
+    padding: 12px 16px;
+    border-bottom: 1px solid @border;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &-name {
+    font-size: 15px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  &-tag {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    padding: 2px 7px;
+    border-radius: 20px;
+  }
+
+  &-body {
+    padding: 10px 16px;
+  }
+
+  &-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px solid @bg2;
+
+    &:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    &:first-child {
+      padding-top: 0;
+    }
+  }
+
+  &-period {
+    font-size: 14px;
+    color: @muted;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    width: 30px;
+    text-transform: uppercase;
+  }
+
+  &-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    justify-content: flex-end;
+  }
+
+  &-cur {
+    font-size: 15px;
+    font-weight: 700;
+    font-family: @mono;
+    color: @text;
+    min-width: 50px;
+    text-align: right;
+  }
+
+  &-prev {
+    font-size: 12px;
+    font-family: @mono;
+    color: @muted;
+    min-width: 52px;
+    text-align: right;
+  }
+
+  &-badge {
+    font-size: 13px;
+    font-family: @mono;
+    font-weight: 600;
+    padding: 1px 6px;
+    border-radius: 4px;
+    min-width: 42px;
+    text-align: center;
+
+    &.up {
+      background: @green-light;
+      color: @green;
+    }
+
+    &.dn {
+      background: @red-light;
+      color: @red;
+    }
+  }
+
+  &-foot {
+    padding: 8px 16px;
+    background: @surface2;
+    border-top: 1px solid @border;
+  }
+
+  &-bwrap {
+    height: 4px;
+    background: @bg2;
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  &-bfill {
+    height: 100%;
+    border-radius: 2px;
+  }
+}
+
+
+// ── 11. 表格卡片 ────────────────────────────────────────────
+
+.tc {
+  background: @surface;
+  border: 1px solid @border;
+  border-radius: @r;
+  box-shadow: @sh;
+  overflow: hidden;
+
+  &-head {
+    padding: 13px 18px;
+    border-bottom: 1px solid @border;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: @surface2;
+  }
+
+  &-title {
+    font-size: 15px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  &-badge {
+    font-size: 13px;
+    font-weight: 600;
+    color: @muted;
+    background: @bg2;
+    border: 1px solid @border;
+    padding: 2px 9px;
+    border-radius: 20px;
+    font-family: @mono;
+  }
+}
+
+// 表格基础样式
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th {
+  padding: 8px 13px;
+  font-size: 13px;
+  color: @muted;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-align: left;
+  border-bottom: 1px solid @border;
+  background: @surface2;
+  white-space: nowrap;
+}
+
+td {
+  padding: 9px 13px;
+  font-size: 13px;
+  border-bottom: 1px solid @bg2;
+  vertical-align: middle;
+}
+
+tr {
+  &:last-child td {
+    border-bottom: none;
+  }
+
+  &:hover td {
+    background: @accent-light;
+  }
+}
+
+
+// ── 12. 表格内用户单元格 ────────────────────────────────────
+
+// 头像
+.av {
+  width: 40px;
+  height: 40px;
+  border-radius: 20%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+// 用户格
+.uc {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.un {
+  font-weight: 500;
+  font-size: 14px;
+}
+
+// 昵称
+.ua {
+  font-size: 15px;
+  color: @muted;
+  font-family: @mono;
+}
+
+// 账号
+
+// IP 标签
+.ip-tag {
+  font-family: @mono;
+  font-size: 14px;
+  color: @text2;
+  background: @bg2;
+  border: 1px solid @border;
+  padding: 2px 8px;
+  border-radius: 5px;
+}
+
+// 时间
+.tt {
+  font-family: @mono;
+  font-size: 14px;
+  color: @text2;
+  white-space: nowrap;
+}
+
+
+// ── 13. 排行榜排名 & 发言数进度 ─────────────────────────────
+
+// 排名序号
+.rn {
+  font-family: @mono;
+  font-weight: 700;
+  font-size: 15px;
+  color: @muted;
+  width: 22px;
+  display: inline-block;
+  text-align: center;
+
+  &.r1 {
+    color: #d97706;
+  }
+
+  // 金
+  &.r2 {
+    color: #9ca3af;
+  }
+
+  // 银
+  &.r3 {
+    color: #b45309;
+  }
+
+  // 铜
+}
+
+// 发言数 + 进度条
+.cc {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.cv {
+  font-family: @mono;
+  font-weight: 700;
+  font-size: 14px;
+  color: @accent;
+  min-width: 42px;
+  text-align: right;
+}
+
+.bt {
+  flex: 1;
+  height: 5px;
+  background: @bg2;
+  border-radius: 3px;
+  overflow: hidden;
+  min-width: 55px;
+}
+
+.bf {
+  height: 100%;
+  border-radius: 3px;
+  background: linear-gradient(90deg, @accent, @accent2);
+}
