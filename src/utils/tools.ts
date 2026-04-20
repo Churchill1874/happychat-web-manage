@@ -5,5 +5,5 @@ export function getImgUrl(url?: string) {
     return url;
   }
 
-  return `http://192.168.188.199:8009${url}`;
+  return url;
 }

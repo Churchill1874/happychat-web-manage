@@ -63,6 +63,23 @@ export default [
     ],
   },
   {
+    path: '/loginfo',
+    icon: 'fileSearchOutlined',
+    name: 'loginfo',
+    routes: [
+      {
+        path: '/loginfo',
+        redirect: '/loginfo/list',
+      },
+      {
+        name: 'list',
+        icon: 'fileSearchOutlined',
+        path: '/loginfo/list',
+        component: './loginfo/list',
+      },
+    ],
+  },
+  {
     path: '/member',
     icon: 'userOutlined',
     name: 'member',

@@ -1,12 +1,12 @@
 import { PageContainer, ProForm, ProFormText, ProFormSelect, ProFormTextArea } from '@ant-design/pro-components';
 import { message, Button, Card, Image } from 'antd';
 import { history } from '@umijs/max';
-import { addTopic } from '@/services/topic';
+import { addSociety } from '@/services/society';
 import { useState } from 'react';
 import { request } from '@/utils/request';
 import './index.less';
 
-const TopicAdd = () => {
+const SocietyAdd = () => {
 
     const [imageList, setImageList] = useState<string[]>([]);
     const [videoCover, setVideoCover] = useState<string>();
@@ -102,11 +102,11 @@ const TopicAdd = () => {
             videoPath
         };
 
-        const res = await addTopic(submitData);
+        const res = await addSociety(submitData);
 
         if (res?.code === 0) {
             message.success('新增成功');
-            history.push('/news/topic/list');
+            history.push('/news/society/list');
             return true;
         }
 
@@ -114,7 +114,7 @@ const TopicAdd = () => {
     };
 
     return (
-        <PageContainer title="新增话题新闻">
+        <PageContainer title="新增社会新闻">
 
             <ProForm
                 onFinish={handleFinish}
@@ -124,7 +124,7 @@ const TopicAdd = () => {
                             doms[0],
                             <Button
                                 key="cancel"
-                                onClick={() => history.push('/news/topic/list')}
+                                onClick={() => history.push('/news/society/list')}
                             >
                                 取消
                             </Button>,
@@ -156,8 +156,16 @@ const TopicAdd = () => {
                     <ProForm.Group colProps={{ span: 24 }}>
 
                         <ProFormText
-                            name="type"
-                            label="类型"
+                            name="source"
+                            label="来源"
+                            width="md"
+                            rules={[{ required: true }]}
+                        />
+
+                        
+                        <ProFormText
+                            name="area"
+                            label="区域"
                             width="md"
                             rules={[{ required: true }]}
                         />
@@ -168,6 +176,18 @@ const TopicAdd = () => {
                             width="md"
                             rules={[{ required: true }]}
                         />
+
+                        <ProFormSelect
+                            name="status"
+                            label="状态"
+                            width="md"
+                            rules={[{ required: true }]}
+                            valueEnum={{
+                                false: '否',
+                                true: '是'
+                            }}
+                        />
+
 
                         <ProFormSelect
                             name="isTop"
@@ -336,4 +356,4 @@ const TopicAdd = () => {
     );
 };
 
-export default TopicAdd;
+export default SocietyAdd;

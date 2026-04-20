@@ -142,11 +142,11 @@ const COMMENT_CONFIG: CommentConfig[] = [
         value: d => d.todayComment, rate: d => d.dayCommentRate,
         rateLabel: d => `昨日 ${d?.yesterdayComment ?? '--'}`,
     },
-/*     {
-        label: '昨日评论', color: 'var(--text2)', barColor: 'var(--border2)', barWidth: () => '61%',
-        value: d => d.yesterdayComment, rate: () => '',
-        rateLabel: () => '昨日数据',
-    }, */
+    /*     {
+            label: '昨日评论', color: 'var(--text2)', barColor: 'var(--border2)', barWidth: () => '61%',
+            value: d => d.yesterdayComment, rate: () => '',
+            rateLabel: () => '昨日数据',
+        }, */
     {
         label: '本周评论', color: 'var(--cyan)', barColor: 'var(--cyan)', barWidth: () => '65%',
         value: d => d.thisWeekComment, rate: d => d.weekCommentRate,
@@ -353,12 +353,15 @@ const Analysis: React.FC = () => {
                         </thead>
                         <tbody>
                             {rankData?.registerList?.map(u => {
-                                const style = avatarStyle(u.name)
                                 return (
                                     <tr key={u.playerId}>
                                         <td>
                                             <div className="uc">
-                                                <div className="av" style={style}>{u.name?.[0]}</div>
+                                                <img
+                                                    src={`/avatars/${u.avatarPath}.jpg`}
+                                                    style={{ width: 30, height: 30, borderRadius: '20%' }}
+                                                />
+
                                                 <div><div className="un">{u.name}</div><div className="ua">{u.address}</div></div>
                                             </div>
                                         </td>
@@ -383,12 +386,14 @@ const Analysis: React.FC = () => {
                         </thead>
                         <tbody>
                             {rankData?.loginList?.map(u => {
-                                const style = avatarStyle(u.name)
                                 return (
                                     <tr key={u.playerId}>
                                         <td>
                                             <div className="uc">
-                                                <div className="av" style={style}>{u.name?.[0]}</div>
+                                                <img
+                                                    src={`/avatars/${u.avatarPath}.jpg`}
+                                                    style={{ width: 30, height: 30, borderRadius: '20%' }}
+                                                />
                                                 <div><div className="un">{u.name}</div><div className="ua">{u.address}</div></div>
                                             </div>
                                         </td>
@@ -412,7 +417,6 @@ const Analysis: React.FC = () => {
                         </thead>
                         <tbody>
                             {rankData?.commentList?.map((u, idx) => {
-                                const style = avatarStyle(u.name)
                                 const rankCls = idx === 0 ? 'rn r1' : idx === 1 ? 'rn r2' : idx === 2 ? 'rn r3' : 'rn'
                                 const RANK_NUMS = ['①', '②', '③', '④', '⑤', '⑥', '⑦', '⑧', '⑨', '⑩']
                                 // 进度条宽度：以第一名为基准 100%
@@ -423,8 +427,10 @@ const Analysis: React.FC = () => {
                                         <td><span className={rankCls}>{RANK_NUMS[idx] ?? idx + 1}</span></td>
                                         <td>
                                             <div className="uc">
-                                                <div className="av" style={style}>{u.name?.[0]}</div>
-                                                <div><div className="un">{u.name}</div><div className="ua">{u.address}</div></div>
+                                                <img
+                                                    src={`/avatars/${u.avatarPath}.jpg`}
+                                                    style={{ width: 30, height: 30, borderRadius: '20%' }}
+                                                />                                                <div><div className="un">{u.name}</div><div className="ua">{u.address}</div></div>
                                             </div>
                                         </td>
                                         <td>

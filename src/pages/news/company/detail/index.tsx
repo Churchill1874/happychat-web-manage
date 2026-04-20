@@ -151,8 +151,14 @@ const Detail = () => {
                         <Card style={{ marginTop: 10 }}>
                             <ProDescriptions dataSource={data} column={5}>
                                 <ProDescriptions.Item label="城市" dataIndex="city" />
-                                <ProDescriptions.Item label="团队规模" dataIndex="teamScale" />
-                                <ProDescriptions.Item label="薪资范围" dataIndex="salaryRange" />
+                                <ProDescriptions.Item label="规模" dataIndex="teamScale" />
+                                <ProDescriptions.Item label="薪资" dataIndex="salaryRange" />
+                                <ProDescriptions.Item label="领导" dataIndex="leadershipCharacter" />
+                                <ProDescriptions.Item label="加班" dataIndex="overtimeCompensation" />
+                                <ProDescriptions.Item label="办公环境" dataIndex="officeEnvironment" />
+                                <ProDescriptions.Item label="奖金" dataIndex="bonus" />
+                                <ProDescriptions.Item label="住宿" dataIndex="live" />
+                                <ProDescriptions.Item label="休假" dataIndex="holiday" />
                             </ProDescriptions>
                         </Card>
 
@@ -179,7 +185,7 @@ const Detail = () => {
                             extra={
                                 <Button
                                     type="primary"
-                                    onClick={() => setEventMode(true) }>
+                                    onClick={() => setEventMode(true)}>
                                     事件
                                 </Button>
                             }
@@ -206,30 +212,50 @@ const Detail = () => {
                                 id,
                                 image: imageList.join('||'),
                             });
-
                             message.success('保存成功');
                             setEditMode(false);
                             detailReq();
                         }}
                     >
-                        <ProFormText name="name" label="名字" />
+                        <Card style={{ marginTop: 10 }}>
+                            <ProFormText name="name" label="名字" />
+                            <ProFormText name="city" label="城市" />
+                            <ProFormText name="teamScale" label="规模" />
+                            <ProFormText name="salaryRange" label="薪资" />
+                            <ProFormText name="leadershipCharacter" label="领导风格" />
+                            <ProFormText name="overtimeCompensation" label="加班补偿" />
+                            <ProFormText name="officeEnvironment" label="办公环境" />
+                            <ProFormText name="bonus" label="奖金" />
+                            <ProFormText name="live" label="住宿" />
+                            <ProFormText name="holiday" label="休假" />
+                        </Card>
 
                         <Card style={{ marginTop: 10 }}>
                             <div className="detail-container">
                                 <div className="detail-left">
                                     {imageList.map((img, i) => (
-                                        <Image key={i} src={getImgUrl(img)} />
+                                        <div key={i} style={{ position: 'relative', width: 'calc(50% - 10px)' }}>
+                                            <Image src={getImgUrl(img)} style={{ width: '100%', borderRadius: 6 }} />
+                                            <span
+                                                className="img-delete"
+                                                style={{ top: -6, right: -6 }}
+                                                onClick={() => setImageList(prev => prev.filter((_, idx) => idx !== i))}
+                                            >
+                                                ×
+                                            </span>
+                                        </div>
                                     ))}
                                     <div className="upload-btn" onClick={handleUpload}>+</div>
                                 </div>
 
                                 <div className="detail-right">
-                                    <ProFormTextArea name="description" />
+                                    <ProFormTextArea name="description" label="公司描述" fieldProps={{ rows: 15 }} />
                                 </div>
                             </div>
                         </Card>
                     </ProForm>
                 )}
+
 
                 {/* ================= ⭐ 事件管理 ================= */}
                 {eventMode && (

@@ -15,6 +15,7 @@ const { REACT_APP_ENV = 'dev' } = process.env;
 const PUBLIC_PATH: string = '/';
 
 export default defineConfig({
+  devtool: false,   
   request: {
     errorConfig: {
       errorHandler(error: any) {
@@ -30,9 +31,8 @@ export default defineConfig({
     requestInterceptors: [
       (config: any) => {
         if (typeof window !== 'undefined') {
-          console.log("123123")
-          const token = '123'
-          //const token = localStorage.getItem('token-id');
+          //const token = '123'
+          const token = localStorage.getItem('token-id');
           if (token) {
             config.headers = {
               ...config.headers,
@@ -177,12 +177,12 @@ export default defineConfig({
    * @description 使用 mako 极速研发
    * @doc https://umijs.org/docs/api/config#mako
    */
-  mako: {},
+  //mako: {},
   esbuildMinifyIIFE: true,
   requestRecord: {},
-  exportStatic: {},
+  //exportStatic: {},
   define: {
     'process.env.CI': process.env.CI,
   },
-  
+
 });
