@@ -358,7 +358,7 @@ const Analysis: React.FC = () => {
                                         <td>
                                             <div className="uc">
                                                 <img
-                                                    src={`/avatars/${u.avatarPath}.jpg`}
+                                                    src={require(`@/assets/avatars/${u.avatarPath}.jpg`)}
                                                     style={{ width: 30, height: 30, borderRadius: '20%' }}
                                                 />
 
@@ -391,7 +391,7 @@ const Analysis: React.FC = () => {
                                         <td>
                                             <div className="uc">
                                                 <img
-                                                    src={`/avatars/${u.avatarPath}.jpg`}
+                                                    src={require(`@/assets/avatars/${u.avatarPath}.jpg`)}
                                                     style={{ width: 30, height: 30, borderRadius: '20%' }}
                                                 />
                                                 <div><div className="un">{u.name}</div><div className="ua">{u.address}</div></div>
@@ -428,7 +428,7 @@ const Analysis: React.FC = () => {
                                         <td>
                                             <div className="uc">
                                                 <img
-                                                    src={`/avatars/${u.avatarPath}.jpg`}
+                                                    src={require(`@/assets/avatars/${u.avatarPath}.jpg`)}
                                                     style={{ width: 30, height: 30, borderRadius: '20%' }}
                                                 />                                                <div><div className="un">{u.name}</div><div className="ua">{u.address}</div></div>
                                             </div>

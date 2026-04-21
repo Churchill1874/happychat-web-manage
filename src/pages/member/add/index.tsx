@@ -122,7 +122,7 @@ const MemberAdd = () => {
                         label: (
                             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                                 <img
-                                    src={`/avatars/${i}.jpg`}
+                                    src={require(`@/assets/avatars/${i}.jpg`)}
                                     style={{ width: 30, height: 30, borderRadius: '20%' }}
                                 />
                                 头像{i}

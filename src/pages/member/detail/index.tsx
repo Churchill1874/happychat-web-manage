@@ -116,7 +116,7 @@ const Detail = () => {
                                 <ProDescriptions.Item label="头像">
                                     {data?.avatarPath ? (
                                         <img
-                                            src={`/avatars/${data.avatarPath}.jpg`}
+                                            src={require(`@/assets/avatars/${data.avatarPath}.jpg`)}
                                             style={{ width: 35, height: 35, borderRadius: '20%' }}
                                         />
                                     ) : (
@@ -256,7 +256,7 @@ const Detail = () => {
                                     label: (
                                         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                                             <img
-                                                src={`/avatars/${i}.jpg`}
+                                                src={require(`@/assets/avatars/${i}.jpg`)}
                                                 style={{ width: 35, height: 35, borderRadius: '20%' }}
                                             />
                                             头像{i}

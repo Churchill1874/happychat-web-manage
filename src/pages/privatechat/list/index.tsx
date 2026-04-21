@@ -51,7 +51,7 @@ const LikesRecord: React.FC = () => {
             title: '头像', dataIndex: 'avatarPath', width: 50, align: 'center', search: false,
             render: (_, record) => (
                 <img
-                    src={`/avatars/${record.sendAvatarPath}.jpg`}
+                    src={require(`@/assets/avatars/${record.sendAvatarPath}.jpg`)}
                     style={{ width: 30, height: 30, borderRadius: '20%' }}
                 />
             )
@@ -62,7 +62,7 @@ const LikesRecord: React.FC = () => {
             title: '头像', dataIndex: 'avatarPath', width: 50, align: 'center', search: false,
             render: (_, record) => (
                 <img
-                    src={`/avatars/${record.receiveAvatarPath}.jpg`}
+                    src={require(`@/assets/avatars/${record.receiveAvatarPath}.jpg`)}
                     style={{ width: 30, height: 30, borderRadius: '20%' }}
                 />
             )

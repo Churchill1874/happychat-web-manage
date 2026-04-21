@@ -40,7 +40,7 @@ const LikesRecord: React.FC = () => {
             title: '头像', dataIndex: 'avatarPath', width: 50, align: 'center', search: false,
             render: (_, record) => (
                 <img
-                    src={`/avatars/${record.avatarPath}.jpg`}
+                    src={require(`@/assets/avatars/${record.avatarPath}.jpg`)}
                     style={{ width: 30, height: 30, borderRadius: '20%' }}
                 />
             )

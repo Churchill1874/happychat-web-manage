@@ -11,7 +11,7 @@ import {
     ProFormInstance
 } from '@ant-design/pro-components';
 
-import { Card, Typography, message, Button, Space, Timeline, Image } from 'antd';
+import { Card, Typography, message, Button, Space, Timeline, Image, Row, Col } from 'antd';
 import './index.less';
 import { request } from '@/utils/request';
 import { getImgUrl } from '@/utils/tools';
@@ -217,17 +217,24 @@ const Detail = () => {
                             detailReq();
                         }}
                     >
+
                         <Card style={{ marginTop: 10 }}>
-                            <ProFormText name="name" label="名字" />
-                            <ProFormText name="city" label="城市" />
-                            <ProFormText name="teamScale" label="规模" />
-                            <ProFormText name="salaryRange" label="薪资" />
-                            <ProFormText name="leadershipCharacter" label="领导风格" />
-                            <ProFormText name="overtimeCompensation" label="加班补偿" />
-                            <ProFormText name="officeEnvironment" label="办公环境" />
-                            <ProFormText name="bonus" label="奖金" />
-                            <ProFormText name="live" label="住宿" />
-                            <ProFormText name="holiday" label="休假" />
+                            <Row gutter={16}>
+                                <Col span={6}><ProFormText name="name" label="名字" /></Col>
+                                <Col span={6}><ProFormText name="city" label="城市" /></Col>
+                                <Col span={6}><ProFormText name="teamScale" label="规模" /></Col>
+                                <Col span={6}><ProFormText name="salaryRange" label="薪资" /></Col>
+                            </Row>
+                            <Row gutter={16}>
+                                <Col span={6}><ProFormText name="leadershipCharacter" label="领导风格" /></Col>
+                                <Col span={6}><ProFormText name="overtimeCompensation" label="加班补偿" /></Col>
+                                <Col span={6}><ProFormText name="officeEnvironment" label="办公环境" /></Col>
+                                <Col span={6}><ProFormText name="bonus" label="奖金" /></Col>
+                            </Row>
+                            <Row gutter={16}>
+                                <Col span={6}><ProFormText name="live" label="住宿" /></Col>
+                                <Col span={6}><ProFormText name="holiday" label="休假" /></Col>
+                            </Row>
                         </Card>
 
                         <Card style={{ marginTop: 10 }}>

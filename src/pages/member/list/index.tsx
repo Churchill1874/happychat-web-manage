@@ -64,7 +64,7 @@ const MemberManagement: React.FC = () => {
         {
             title: '头像', align: 'center', width: 40, search: false, render: (_, record) => (
                 <img
-                    src={`/avatars/${record.avatarPath}.jpg`}
+                    src={require(`@/assets/avatars/${record.avatarPath}.jpg`)}
                     style={{ width: 30, height: 30, borderRadius: '20%' }}
                 />
             )
