@@ -143,7 +143,7 @@ const SocietyAdd = () => {
                             width="lg"
                             rules={[
                                 { required: true, message: '请输入标题' },
-                                { min: 1, max: 30, message: "标题长度1-30位" },
+                                { min: 1, max: 50, message: "标题长度1-50位" },
                             ]}
                         />
                     </ProForm.Group>

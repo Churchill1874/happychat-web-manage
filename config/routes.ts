@@ -1,4 +1,8 @@
-﻿import path from "node:path";
+// 目标路径: config/routes.ts
+// 完整文件，可直接整份覆盖替换你项目里的 config/routes.ts
+// （只在 /news 模块后面新增了一个 /telegram 顶级菜单块，其余一字未改）
+
+import path from "node:path";
 
 /**
  * @name umi 的路由配置
@@ -231,6 +235,29 @@ export default [
         hideInMenu: true,
       },
 
+    ]
+  },
+
+  // 电报频道/群组管理（新增模块）
+  {
+    path: '/telegram',
+    icon: 'sendOutlined',
+    name: 'telegram',
+    routes: [
+      {
+        path: '/telegram',
+        redirect: '/telegram/list',
+      },
+      {
+        name: 'list',
+        icon: 'sendOutlined',
+        path: '/telegram/list',
+        component: './telegram/list'
+      },
+      {
+        path: '/telegram/add',// ✅ 新增页
+        component: './telegram/add'
+      },
     ]
   },
 

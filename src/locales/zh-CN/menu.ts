@@ -1,3 +1,6 @@
+// 目标路径: src/locales/zh-CN/menu.ts
+// 完整文件，可直接整份覆盖替换（只加了 menu.telegram 相关两行，其余一字未改）
+
 export default {
   'menu.welcome': '欢迎',
   'menu.more-blocks': '更多区块',
@@ -32,6 +35,8 @@ export default {
   'menu.news.china-mainland': '聚合新闻',
   'menu.news.topic': '话题',
   'menu.news.society': '社会',
+  'menu.telegram': '电报管理',
+  'menu.telegram.list': '频道/群组列表',
   'menu.comment': '评论管理',
   'menu.comment.info': '评论内容',
   'menu.blacklist': '黑名单',

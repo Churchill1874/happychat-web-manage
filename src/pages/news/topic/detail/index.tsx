@@ -1,6 +1,6 @@
 import { useParams, history } from '@umijs/max';
 import { useEffect, useState, useRef } from 'react';
-import { getTopicDetail, update } from '@/services/topic';
+import { getTopicDetail, update, sendBotComments } from '@/services/topic';
 import {
     ProDescriptions,
     ProForm,
@@ -11,7 +11,7 @@ import {
     ProFormDatePicker,
     ProFormInstance
 } from '@ant-design/pro-components';
-import { Card, Typography, message, Button, Space, Image } from 'antd';
+import { Card, Typography, App, Button, Space, Image, Input } from 'antd';
 import './index.less';
 import { request } from '@/utils/request';
 import { getImgUrl } from '@/utils/tools';
@@ -34,6 +34,8 @@ export interface TopicType {
 }
 
 const Detail = () => {
+    const { message } = App.useApp();  // 👈 加这一行
+
     const { id } = useParams<{ id: string }>();
     const [data, setData] = useState<TopicType>();
     const [loading, setLoading] = useState(false);
@@ -43,6 +45,40 @@ const Detail = () => {
     const [imageList, setImageList] = useState<string[]>([]);
     const [videoCover, setVideoCover] = useState<string>();
     const [videoPath, setVideoPath] = useState<string>();
+
+    const { TextArea } = Input;
+
+
+    // 在组件内已有的 state 下面加
+    const [botInputList, setBotInputList] = useState<string[]>(['', '', '', '', '']);
+    const [botSubmitting, setBotSubmitting] = useState(false);
+
+    const handleSendBotComments = async () => {
+        if (!id) return;
+
+        const filteredList = botInputList.filter((item) => item.trim() !== '');
+
+        if (filteredList.length === 0) {
+            message.warning('请至少填写一条评论');
+            return;
+        }
+
+        setBotSubmitting(true);
+        try {
+            const resp = await sendBotComments({ id, contentList: filteredList });
+            if (resp.code === 0) {
+                message.success('发送成功');
+                setBotInputList(['', '', '', '', '']);
+            } else {
+                message.error(resp.msg || '发送失败');
+            }
+        } catch {
+            message.error('网络异常');
+        } finally {
+            setBotSubmitting(false);
+        }
+    };
+
 
     const showVideoCover = videoCover !== undefined ? videoCover : data?.videoCover;
     const showVideoPath = videoPath !== undefined ? videoPath : data?.videoPath;
@@ -322,7 +358,35 @@ const Detail = () => {
 
                         </Card>
 
-
+                        <Card style={{ marginTop: 10 }} title="随机机器人评论">
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                                <div style={{ display: 'flex', flexDirection: 'row', gap: 8 }}>
+                                    {botInputList.map((val, idx) => (
+                                        <TextArea
+                                            key={idx}
+                                            value={val}
+                                            onChange={(e) => {
+                                                const next = [...botInputList];
+                                                next[idx] = e.target.value;
+                                                setBotInputList(next);
+                                            }}
+                                            placeholder={`评论 ${idx + 1}`}
+                                            autoSize={{ minRows: 9, maxRows: 9 }}
+                                            style={{ width: 240, resize: 'none', flexShrink: 0 }}
+                                        />
+                                    ))}
+                                </div>
+                                <div style={{ textAlign: 'right' }}>
+                                    <Button
+                                        type="primary"
+                                        loading={botSubmitting}
+                                        onClick={handleSendBotComments}
+                                    >
+                                        发送
+                                    </Button>
+                                </div>
+                            </div>
+                        </Card>
 
                     </>
 
@@ -373,7 +437,7 @@ const Detail = () => {
                                     width="lg"
                                     rules={[
                                         { required: true, message: '请输入标题' },
-                                        { min: 1, max: 30, message: "标题长度1-30位" },
+                                        { min: 1, max: 50, message: "标题长度1-50位" },
                                     ]}
                                 />
                             </ProForm.Group>

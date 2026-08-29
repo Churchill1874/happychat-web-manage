@@ -74,3 +74,16 @@ export async function update(param: { [key: string]: any; }) {
     }
   )
 }
+
+export interface SendBotCommentsReqType {
+  id: string;
+  contentList: string[];
+}
+
+const SendBotCommentsPath = '/api/manage/southeastAsia/sendBotComments'; // 替换成你的路径
+export const sendBotComments = async (param: SendBotCommentsReqType) => {
+  return request(SendBotCommentsPath, {
+    method: 'POST',
+    data: param,
+  });
+};
