@@ -261,6 +261,35 @@ export default [
     ]
   },
 
+  // 投票管理
+  {
+    path: '/vote',
+    icon: 'barChartOutlined',
+    name: 'vote',
+    routes: [
+      {
+        path: '/vote',
+        redirect: '/vote/list',
+      },
+      {
+        name: 'list',
+        icon: 'barChartOutlined',
+        path: '/vote/list',
+        component: './vote/list'
+      },
+      {
+        path: '/vote/add',
+        component: './vote/edit',
+        hideInMenu: true,
+      },
+      {
+        path: '/vote/edit/:id',
+        component: './vote/edit',
+        hideInMenu: true,
+      },
+    ]
+  },
+
   {
     path: '/comment',
     icon: 'messageOutlined',

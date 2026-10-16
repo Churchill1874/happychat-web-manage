@@ -48,7 +48,7 @@ const Comment: React.FC = () => {
             dataIndex: 'infoType',
             width: 30,
             align: 'center',
-            valueEnum: { 1: '国内', 2: '东南亚', 3: '政治', 4: '社会', 5: '推广', 6: '话题', 7: '贴吧', 8: '曝光', 9: '公司' },
+            valueEnum: { 1: '国内', 2: '东南亚', 3: '政治', 4: '社会', 5: '推广', 6: '话题', 7: '贴吧', 8: '曝光', 9: '公司', 10: '投票' },
             render: (_, record) => {
                 const map: Record<number, { text: string; color: string }> = {
                     1: { text: '国内', color: 'blue' },
@@ -60,6 +60,7 @@ const Comment: React.FC = () => {
                     7: { text: '贴吧', color: 'gold' },
                     8: { text: '曝光', color: 'magenta' },
                     9: { text: '公司', color: 'volcano' },
+                    10: { text: '投票', color: 'geekblue' },
                 };
 
                 const item = map[record.infoType];

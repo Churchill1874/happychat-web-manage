@@ -44,7 +44,7 @@ const Blacklist: React.FC = () => {
             width: 80,
             search: true,
             align: 'center',
-            valueEnum: { 1: '国内新闻', 2: '工作', 3: '公司', 4: '聊妹', 5: '投注', 6: '东南亚新闻', 7: '政治', 8: '社会', 9: '推广', 10: '话题', 11: '曝光' }
+            valueEnum: { 1: '国内新闻', 2: '工作', 3: '公司', 4: '聊妹', 5: '投注', 6: '东南亚新闻', 7: '政治', 8: '社会', 9: '推广', 10: '话题', 11: '曝光', 12: '投票' }
         },
         { title: '简介', dataIndex: 'content', width: 300, search: false, align: 'center' },
 

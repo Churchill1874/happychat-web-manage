@@ -37,6 +37,8 @@ export default {
   'menu.news.society': '社会',
   'menu.telegram': '电报管理',
   'menu.telegram.list': '频道/群组列表',
+  'menu.vote': '投票管理',
+  'menu.vote.list': '投票列表',
   'menu.comment': '评论管理',
   'menu.comment.info': '评论内容',
   'menu.blacklist': '黑名单',
